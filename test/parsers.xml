@@ -1,0 +1,5 @@
+<parsers><item name="DEMO"><xpath>//title</xpath><callback><?aws $from_config = $el->topmost()->appConfig('/ALIAS');
+
+	$t = $el -> ownerDocument -> createTextNode($from_config);
+
+$el -> appendChild($t);?></callback><check><?aws return TRUE;?></check></item></parsers>

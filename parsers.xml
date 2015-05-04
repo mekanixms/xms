@@ -1,0 +1,14 @@
+<parsers><templates><item>
+      <alias/>
+      <check/>
+      <xpath/>
+      <callback/>
+    </item></templates><item name="SEO SET TITLE TAG"><xpath>//title</xpath><callback><?aws $from_config = $el->topmost()->appConfig('/ALIAS');
+
+	$t = $el -> ownerDocument -> createTextNode($from_config);
+
+$el -> appendChild($t);?></callback><check><?aws return AWS_SEO_PARSERS_ENABLED;?></check></item><item name="SEO SET META DESCRIPTION"><xpath>//element[@name='description']</xpath><callback><?aws $from_config = $el->topmost()->appConfig('/DESCRIPTION');
+
+	$t = $from_config;
+
+$el -> setAttribute('content',$t);?></callback><check><?aws return AWS_SEO_PARSERS_ENABLED;?></check></item><item name="SEO SET META LANGUAGE"><xpath>//metas/element[@http-equiv="Content-Language"]</xpath><callback><?aws $el->setAttribute("content",$_SESSION["lang"]);?></callback><check><?aws if($_SESSION["lang"]) return TRUE;?></check></item><item name="SEO SET KEYWORDS"><xpath>//metas/element[@name="keywords"]</xpath><callback><?aws $el->setAttribute("content","SEO KEYWORDS");?></callback><check><?aws return AWS_SEO_PARSERS_ENABLED;?></check></item></parsers>

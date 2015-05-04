@@ -1,0 +1,27 @@
+<app>
+  
+  <client>
+    
+    <content>
+<div id="wrap"><p>FIRST PARAGRAPH</p><div id="ex">
+    
+  <p><em/></p></div></div>
+</content>
+  </client>
+  
+  <filters>
+    
+    <dom>
+      
+      <filter><xpath>//*[@id="ex"]</xpath><?aws $el->setAttribute("xpathfilter","TEST");
+
+$w = new Xms\Core\Xml($el);
+
+$w->q("p")->append("TEST")->q("descendant::em")->append(" XPATH FILTER ");?></filter>
+      
+      
+    </dom>
+  </filters>
+  
+  
+<bookmarks><bookmark name="XPATH FILTER">app:eq(0)&gt;filters:eq(0)&gt;dom:eq(0)&gt;filter:eq(0)&gt;xpath:eq(0)</bookmark><bookmark name="XPATH FILTER TARGET">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#wrap&gt;div#ex</bookmark></bookmarks></app>

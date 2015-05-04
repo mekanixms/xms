@@ -1,0 +1,4 @@
+php_value output_handler ob_gzhandler
+<filesMatch ".js$">
+AddHandler application/x-httpd-php .js
+</filesMatch>

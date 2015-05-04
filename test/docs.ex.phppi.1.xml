@@ -1,0 +1,10 @@
+<app>
+  
+  <client>
+    <header/>
+    <content>
+      <div><?php $c="<root><externalContent/></root>";
+$h = new Xms\Core\Xml($c);
+return $h("/root")->get(0);?>
+      View the source of this page to check whether works or not<?php return "<TEST/>";?><?php $el->setAttribute("EXEC_PI_TEST","WORKS");?></div></content></client>
+<bookmarks/></app>

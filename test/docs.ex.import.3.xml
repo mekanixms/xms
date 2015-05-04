@@ -1,0 +1,25 @@
+<app outputxsl="xsl/aws2html.xsl">
+  
+  <init><?aws $el->topmost()->on("ready",function(){
+$this->invokeFilters("FIRST");
+});
+
+$el->topmost()->on("done",function(){
+$this->invokeFilters("TEST");
+});?></init><client>
+    <header/>
+    <content>
+      <center><strong><font color="red">import filter demo</font></strong></center><div id="MAIN"><fieldset name="EX1"><legend>Ex 1</legend><div id="importDirectiveEx1"/></fieldset><br/><fieldset name="EX2"><legend>Ex 2</legend><div id="importDirectiveEx2"/></fieldset><br/><fieldset name="EX3"><legend>Ex 3</legend><div id="importDirectiveEx3"/></fieldset><br/><fieldset name="EX4"><legend>Ex 4</legend><div id="importDirectiveEx4"/></fieldset><br/><fieldset name="EX5"><legend>Ex 5</legend><div id="importDirectiveEx5"/></fieldset><br/><fieldset name="EX6"><legend>Ex 6</legend><div id="importDirectiveEx6"/></fieldset><br/><strong><?php return get_class($el->topmost())." ".Xms\Core\Xms::VERSION;?></strong></div>
+    </content>
+  </client>
+<bookmarks><bookmark name="MAIN">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN</bookmark><bookmark name="EX1_DIRECTIVE">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(0)</bookmark><bookmark name="EX1_Template">app:eq(0)&gt;templates:eq(0)&gt;basicLocalImport:eq(0)</bookmark><bookmark name="EX2">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(1)&gt;div:eq(0)</bookmark><bookmark name="EX3">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(2)&gt;div:eq(0)</bookmark><bookmark name="EX4">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(3)&gt;div:eq(0)</bookmark><bookmark name="EX5">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(4)</bookmark><bookmark name="EX6">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(5)</bookmark></bookmarks><templates><basicLocalImport>
+      <strong>This is a basic import from current file (if no source attribute defined)<?php $el->setAttribute("RUNHERE","TEST");?></strong>
+      <?php $el->setAttribute("RUNHERE","TEST");?>
+      <?php return "REPLACE TEST";?>
+      <?php $el->setAttribute("EXEC","TEST");?>
+      
+    </basicLocalImport></templates><filters><dom><filter class="invokable" id="FIRST"><import xpath="//app/templates/basicLocalImport/node()"/>//div[@id="importDirectiveEx1"]</filter><filter><import source="test/docs.ex.phppi.1.xml" xpath="//app[1]/client[1]/content[1]/div[1]"/>//div[@id="importDirectiveEx2"]</filter><filter class="invokable" id="TEST"><import cache="enabled" cachestorage="descriereCacheFile" clearcache="FALSE" importashtml="" source="http://casa-lucan.ro/descriere" xpath="//*[@id='facilitati']"/>//div[@id="importDirectiveEx4"]</filter><filter><import importashtml="" source="http://casa-lucan.ro/tarife" xpath="//fieldset[@id='iul19aug31']"/>//div[@id="importDirectiveEx3"]</filter><filter class="invokable" id="TEST"><import cache="enabled" cachestorage="docsImportCacheFile" clearcache="3600" importashtml="" source="http://aws-dms.com/temp.php?use=templates/docs.xml" xpath="//li[@name='import']/*"><eachnode><?aws if($el->localName == "ul") return TRUE;?></eachnode><check><?aws return TRUE;?></check><filter><?aws $doc->q("//li")->each(function ($el)
+{
+if($el->hasAttribute("remove")) $el->parentNode->removeChild($el);
+});?></filter></import>//div[@id="importDirectiveEx5"]</filter><filter><import cache="enabled" cachestorage="descriereCacheFile" clearcache="FALSE" importashtml="" source="http://casa-lucan.ro/descriere" xpath="//*[@id='facilitati']"><runfirst><?aws $el->setAttribute("cachestorage","descriereLaCerereCacheFile");
+$el->setAttribute("xpath","//*[@id='laCerere']");?></runfirst></import>//div[@id="importDirectiveEx6"]</filter></dom></filters></app>

@@ -1,0 +1,16 @@
+{
+    "name": "xms",
+    "description": "xml based cmf with dom events support, observable instance methods and properties",
+    "license": "GPL-V2",
+    "keywords": [
+        "framework",
+        "xms",
+	"xml",
+	"DOM",
+	"event"
+    ],
+    "homepage": "http://aws-dms.com",
+    "require": {
+        "php": ">=5.4.0"
+    }
+}

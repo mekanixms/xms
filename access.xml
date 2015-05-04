@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<access order="allow deny"><allow><app path="templates/designer.xml"><all/></app></allow><deny/><?aws $order = explode(' ', $access -> doc -> documentElement -> getAttribute("order"));
+
+//DEFAULT RULE
+$order[0]=='allow'?$toRet = TRUE:$toRet = FALSE;
+
+foreach ($order as $chain) {
+	$found = FALSE;
+
+	$c = array(
+				'0' => "/access/" . $chain . "/app[@path='" . $app . "']/" . $user,
+				'1' => "/access/" . $chain . "/app[@path='" . $app . "']/all",
+				'2' => "/access/" . $chain . "/unknown/" . $user,
+				'3' => "/access/" . $chain . "/unknown/all"
+				);
+
+	foreach ($c as $q) {
+
+		if (!$found) {
+			if ($chain == 'allow')
+				$op = TRUE;
+			else
+				$op = FALSE;
+			
+			if ( sizeof($access -> q($q) -> results ) > 0) {
+				$toRet = $op;
+				$found = TRUE;
+			} else
+				$found = FALSE;
+		}
+	}
+}
+
+return $toRet;?><!--parameters: $access, $app, $user
+ where:
+$app is the app name
+$access is an instance of xmsAcessControl class
+$user XMS_USER_ACCESS_VAR--></access>

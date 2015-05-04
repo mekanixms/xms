@@ -1,0 +1,6 @@
+<app outputxsl="xsl/aws2xhtml.xsl"><bookmarks/><remotetemplate><runfirst><?aws if(!$_GET["thisone"]) $el->setAttribute("source","http://casa-lucan.ro");
+else $el->setAttribute("source","http://casa-lucan.ro/".$_GET["thisone"]);?></runfirst></remotetemplate><filters><dom><filter><xpath>//style[@rel='stylesheet']</xpath><?aws $el->setAttribute("href","http://www.casa-lucan.ro/".$el->getAttribute("href"));
+?></filter></dom></filters><templates/><parsers><item><xpath>//a[@href]</xpath><callback><?aws $el->setAttribute("href","/?use=".$el->topmost()->TEMPLATE_FILE_SOURCE."&thisone=".$el->getAttribute("href"));?></callback></item><item><xpath>//load[@src]|//img</xpath><callback><?aws $el->setAttribute("src","http://www.casa-lucan.ro/".$el->getAttribute("src"));?></callback></item><item><xpath>//center[@name="COPYRIGHT ARISTEER"]</xpath><callback><?aws $s = $el->ownerDocument->createElement("strong");
+$s->appendChild($el->ownerDocument->createTextNode(PHP_SAPI));
+$s->setAttribute("class","SAPI");
+$el->appendChild($s);?></callback></item></parsers></app>

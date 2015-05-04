@@ -1,0 +1,17 @@
+<Files ~ "\.(xml)$">
+order deny,allow
+deny from all
+</Files>
+
+<IfModule mod_rewrite.c>
+    SetEnv HTTP_MOD_REWRITE On
+###############################################################
+#####uncomment below options to use the mod rewrite router#####
+###############################################################
+#Options +FollowSymLinks -MultiViews
+#IndexIgnore */*
+#RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteRule ^(.*)$ urlhandler.php
+</IfModule>

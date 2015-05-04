@@ -1,0 +1,138 @@
+<router><templates><MODEL1><?aws // ROUTER MODEL 1 / DEFAULT
+//parameters: $router,$route,$query,$accessControl
+// default router for backward compatibility
+//works both with mod rewrite and without it
+//returns the application given in $_GET[use]
+if ($query["use"]) {
+    if (!file_exists($query["use"]) || !is_file($query["use"]))
+	$awsappxmltemplateFile = AWS_ERROR_404;
+    else
+	$awsappxmltemplateFile = $query["use"];
+} else
+    $awsappxmltemplateFile = AWS_HOME;
+
+$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile; 
+
+if (constant('AWS_USER_ACCESS_DISABLED'))
+    return file_get_contents($awsappxmltemplateFile);
+else {
+    if ($accessControl -> hasAccess($awsappxmltemplateFile))
+	return file_get_contents($awsappxmltemplateFile);
+    else
+	return file_get_contents(AWS_ERROR_403);
+}?></MODEL1><MODEL2><route bind="templates/designer.xml"><?aws //do some php stuff here?></route><?aws // ROUTER MODEL 2 / same as model 1 + executes a function
+//parameters: $router,$route,$query,$accessControl
+
+function getRouteCode($el) {
+    foreach ($el->childNodes as $child)
+	if ($child -> nodeType == 7)
+	    $toRet = $child -> data;
+
+    $f = create_function('$el', $toRet);
+    $f($el);
+}
+
+//looks for a route element (inside this file) bounded to above value and if found execute the code inside
+$router -> q("/router/route[@bind[contains(.,'" . $query["use"] . "')]]") -> each('getRouteCode');
+
+if ($query["use"]) {
+    if (!file_exists($query["use"]) || !is_file($query["use"]))
+	$awsappxmltemplateFile = AWS_ERROR_404;
+    else
+	$awsappxmltemplateFile = $query["use"];
+} else
+    $awsappxmltemplateFile = AWS_HOME;
+
+$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile; 
+
+if (constant('AWS_USER_ACCESS_DISABLED'))
+    return file_get_contents($awsappxmltemplateFile);
+else {
+    if ($accessControl -> hasAccess($awsappxmltemplateFile))
+	return file_get_contents($awsappxmltemplateFile);
+    else
+	return file_get_contents(AWS_ERROR_403);
+}?></MODEL2><MODEL3><?aws // ROUTER MODEL 3
+//parameters: $router,$route,$query,$accessControl
+
+$chain = explode("/", $router -> getPathInfo($route));
+$r = "templates/" . $chain[0] . ".xml";
+
+if ($chain[0] != '') {
+    if (!file_exists($r) || !is_file($r))
+	$router->topmost()->TEMPLATE_FILE_SOURCE = constant("AWS_ERROR_404");
+    else
+	$router->topmost()->TEMPLATE_FILE_SOURCE = $r;
+} else
+    $router->topmost()->TEMPLATE_FILE_SOURCE = constant("AWS_HOME");
+
+
+if (constant('AWS_USER_ACCESS_DISABLED'))
+    return file_get_contents($router->topmost()->TEMPLATE_FILE_SOURCE);
+else {
+    if ($accessControl -> hasAccess($router->topmost()->TEMPLATE_FILE_SOURCE))
+	return file_get_contents($router->topmost()->TEMPLATE_FILE_SOURCE);
+    else
+	return file_get_contents(constant("AWS_ERROR_403"));
+}?></MODEL3><MODEL4><?aws // ROUTER MODEL 4
+//parameters: $router,$route,$query,$accessControl
+// a more advanced router for mod rewrite
+function getRouteCode($el) {
+    foreach ($el->childNodes as $child)
+	if ($child -> nodeType == 7)
+	    $toRet = $child -> data;
+
+    $f = create_function('$el', $toRet);
+    $f($el);
+}
+
+//extract the first element in route
+$chain = explode("/", $router -> getPathInfo($route));
+
+//looks for a route element (inside this file) bounded to above value and if found execute the code inside
+$router -> q("/router/route[@bind[contains(.,'" . $chain[0] . "')]]") -> each('getRouteCode');
+
+//if it had a function, get the path from target attribute
+if (get_class($router ->get(0)) == "DOMElement")
+    $r = $router ->get(0) -> getAttribute('target');
+else
+    // else get the application with name chain[0]
+    $r = "templates/" . $chain[0] . ".xml";
+
+if (!file_exists($r))
+    $awsappxmltemplateFile = AWS_ERROR_404;
+else
+    $awsappxmltemplateFile = $r;
+
+$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile; 
+
+if (constant('AWS_USER_ACCESS_DISABLED'))
+    return file_get_contents($awsappxmltemplateFile);
+else {
+    if ($accessControl -> hasAccess($awsappxmltemplateFile))
+	return file_get_contents($awsappxmltemplateFile);
+    else
+	return file_get_contents(AWS_ERROR_403);
+}?><route bind="temp.php"><?aws $el->setAttribute('target','templates/index.xml');?></route><route bind="designer"><?aws $el->setAttribute('target','templates/designer.xml');?></route></MODEL4></templates><?aws // ROUTER MODEL 1 / DEFAULT
+//parameters: $router,$route,$query,$accessControl
+// default router for backward compatibility
+//works both with mod rewrite and without it
+//returns the application given in $_GET[use]
+if ($query["use"]) {
+    if (!file_exists($query["use"]) || !is_file($query["use"]))
+	$awsappxmltemplateFile = AWS_ERROR_404;
+    else
+	$awsappxmltemplateFile = $query["use"];
+} else
+    $awsappxmltemplateFile = AWS_HOME;
+
+$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile; 
+
+if (constant('AWS_USER_ACCESS_DISABLED'))
+    return file_get_contents($awsappxmltemplateFile);
+else {
+    if ($accessControl -> hasAccess($awsappxmltemplateFile))
+	return file_get_contents($awsappxmltemplateFile);
+    else
+	return file_get_contents(AWS_ERROR_403);
+}?></router>

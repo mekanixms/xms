@@ -1,0 +1,5 @@
+<app>
+  <use source="test/docs.ex.case.1.xml" where="client" xpath="//app/client/content"/>
+  <client><content><br/><font color="red">YOU SHOULD NOT SEE THIS</font><br/></content>
+  </client>
+<bookmarks/></app>
