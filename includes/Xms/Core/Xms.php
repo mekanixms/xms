@@ -199,15 +199,15 @@ use XmsHelpers;
 
         $this->bind("change", "XMS_SERVER_CONSOLE", function($n) {
             if (constant("AWS_DEBUG"))
-                Utils::xmsLogRotate("log" . DIRECTORY_SEPARATOR . ".XMS_SERVER_CONSOLE", $n . "\n");
+                Utils::xmsLogRotate(constant('XMS_SERVER_CONSOLE'), $n . "\n");
         });
 
         $this->on("loaded", function() {
-           if(!file_exists("cache"))
-               mkdir ("cache");
-           
-           if(!file_exists("log"))
-               mkdir ("log");
+            if (!file_exists(constant("XMS_WORKING_FOLDER") . DIRECTORY_SEPARATOR . "cache"))
+                mkdir(constant("XMS_WORKING_FOLDER") . DIRECTORY_SEPARATOR . "cache");
+
+            if (!file_exists(constant("XMS_WORKING_FOLDER") . DIRECTORY_SEPARATOR . "log"))
+                mkdir(constant("XMS_WORKING_FOLDER") . DIRECTORY_SEPARATOR . "log");
         });
 
         $this->initResources();

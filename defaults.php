@@ -13,7 +13,7 @@ require 'includes/autoload.php';
 
 //TESTING XSL PROCESSOR LOADED
 if (!extension_loaded("xsl"))
-	die("XSL Extension not loaded.<br/>Please install php xslt extension");
+    die("XSL Extension not loaded.<br/>Please install php xslt extension");
 
 ini_set("display_errors", "Off");
 
@@ -28,10 +28,10 @@ ini_set('default_charset', 'utf-8');
 //thanks to Christian Roy
 //http://christian.roy.name/blog/detecting-modrewrite-using-php
 if (function_exists('apache_get_modules')) {
-	$MOD_REWRITE = in_array('mod_rewrite', apache_get_modules());
+    $MOD_REWRITE = in_array('mod_rewrite', apache_get_modules());
 } else {
-	$MOD_REWRITE = getenv('HTTP_MOD_REWRITE') == 'On' ? TRUE : FALSE;
-	$MOD_REWRITE = $_SERVER['HTTP_MOD_REWRITE'] == 'On' ? TRUE : FALSE;
+    $MOD_REWRITE = getenv('HTTP_MOD_REWRITE') == 'On' ? TRUE : FALSE;
+    $MOD_REWRITE = $_SERVER['HTTP_MOD_REWRITE'] == 'On' ? TRUE : FALSE;
 }
 
 define('MOD_REWRITE_ENABLED', $MOD_REWRITE);
@@ -44,9 +44,8 @@ define('XMS_RESOURCE_PARSERS', 'parsers.xml');
 define('XMS_RESOURCE_LANG', 'lang.xml');
 
 ////
-
 //APPLICATION
-define('XMS_APPS_LOCKED_IN_CWD', TRUE);
+define('XMS_APPS_LOCKED_IN_CWD', FALSE);
 
 define('AWS_HOME', "templates/index.xml");
 
@@ -81,7 +80,6 @@ define('AWS_STREAM_FILE', FALSE);
 //////////////////
 //ERROR HANDLING//
 //////////////////
-
 //403 FORBIDDEN APPLICATION
 define('AWS_ERROR_403', "templates/403.xml");
 //404 NOT FOUND ERROR APPLICATION
@@ -100,9 +98,9 @@ define('AWS_DEBUG_ERROR_HANDLERS_DROP_NOTICES', TRUE);
 define('AWS_DEBUG_ERROR_HANDLERS_DROP_WARNINGS', FALSE);
 
 if (AWS_DEBUG_USE_XMS_ERROR_HANDLERS) {
-	set_error_handler('Utils::xmsCaptureErrors');
-	set_exception_handler('Utils::xmsCaptureExceptions');
-	register_shutdown_function('Utils::xmsCaptureShutdown');
+    set_error_handler('Utils::xmsCaptureErrors');
+    set_exception_handler('Utils::xmsCaptureExceptions');
+    register_shutdown_function('Utils::xmsCaptureShutdown');
 }
 
 //set to FALSE if you want Xms::appConfig to use
@@ -113,9 +111,12 @@ define("AWS_APP_CONFIG_USE_APP_NAME", FALSE);
 define("AWS_SEO_PARSERS_ENABLED", TRUE);
 
 //THE STREAMS TO USE FOR LOGS
-define('AWS_DEBUG_GLOBAL_FILENAME', "log" . DIRECTORY_SEPARATOR . ".GLOBAL.log");
-define('AWS_DEBUG_FILENAME', "log" . DIRECTORY_SEPARATOR . ".".session_id() . ".log");
-define('AWS_DEBUGGING_ERRORS_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsErrors.log");
-define('AWS_DEBUGGING_EXCEPTIONS_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsExceptions.log");
-define('AWS_DEBUGGING_SHUTDOWN_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsShutdown.log");
+define('XMS_WORKING_FOLDER', __DIR__);
+define('XMS_SERVER_CONSOLE', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".XMS_SERVER_CONSOLE");
+define('AWS_DEBUG_GLOBAL_FILENAME', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".GLOBAL.log");
+define('AWS_DEBUG_FILENAME', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . "." . session_id() . ".log");
+define('AWS_DEBUGGING_ERRORS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsErrors.log");
+define('AWS_DEBUGGING_EXCEPTIONS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsExceptions.log");
+define('AWS_DEBUGGING_SHUTDOWN_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsShutdown.log");
+
 ?>

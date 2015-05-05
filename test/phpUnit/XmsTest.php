@@ -105,11 +105,13 @@ class XmsTest extends PHPUnit_Framework_TestCase
         define("AWS_SEO_PARSERS_ENABLED", TRUE);
 
 //THE STREAMS TO USE FOR LOGS
-        define('AWS_DEBUG_GLOBAL_FILENAME', "log" . DIRECTORY_SEPARATOR . ".GLOBAL.log");
-        define('AWS_DEBUG_FILENAME', "log" . DIRECTORY_SEPARATOR . "." . session_id() . ".log");
-        define('AWS_DEBUGGING_ERRORS_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsErrors.log");
-        define('AWS_DEBUGGING_EXCEPTIONS_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsExceptions.log");
-        define('AWS_DEBUGGING_SHUTDOWN_HANDLER', "log" . DIRECTORY_SEPARATOR . ".xmsShutdown.log");
+        define('XMS_WORKING_FOLDER', __DIR__);
+        define('XMS_SERVER_CONSOLE', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".XMS_SERVER_CONSOLE");
+        define('AWS_DEBUG_GLOBAL_FILENAME', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".GLOBAL.log");
+        define('AWS_DEBUG_FILENAME', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . "." . session_id() . ".log");
+        define('AWS_DEBUGGING_ERRORS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsErrors.log");
+        define('AWS_DEBUGGING_EXCEPTIONS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsExceptions.log");
+        define('AWS_DEBUGGING_SHUTDOWN_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsShutdown.log");
     }
 
     public function testInstanceAndOutput()
@@ -623,5 +625,33 @@ class XmsTest extends PHPUnit_Framework_TestCase
         ];
         foreach ($test as $t)
             $this->assertTrue($t);
+    }
+
+    public function testExecutionOrder()
+    {
+        print "\n";
+        print "Testing global parsers\n";
+
+        $xms = new Xms\Core\Xms([
+            "XMS_INPUT" => "/?use=test/docs.ex.execution.order.1.xml"
+        ]);
+        $xms->bind("change", "EXECUTION_ORDER", function($n, $o) {
+            $GLOBALS["EXECUTION_ORDER"][] = $n;
+        });
+        $this->assertInstanceOf("Xms\Core\Xms", $xms, "failed");
+
+        $xms->run();
+
+        $out = $xms->get();
+
+        $xml = new Xms\Core\Html($out);
+        $this->assertEquals($GLOBALS["EXECUTION_ORDER"], array(
+            0 => '/client/content/div',
+            1 => '/client/content/div/div',
+            2 => '/client/content/div/div/div',
+            3 => '/client/content/div/div/div/div',
+            4 => '/client/content/div/div/div/div/strong',
+            5 => '/client/content/strong'
+        ));
     }
 }
