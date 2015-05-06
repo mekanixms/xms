@@ -233,7 +233,7 @@ abstract class Utils
                     if ($d->result->hasChildNodes()) {
                         $current = $d->result->firstChild;
                         do {
-                            $newNode = $el->parentNode->insertBefore($current->cloneNode(TRUE), $el->nextSibling);
+                            $newNode = $el->parentNode->insertBefore($current->cloneNode(TRUE), $el);
                             self::clientrun($newNode);
                             $current = $current->nextSibling;
                         } while ($current instanceof DOMNode);

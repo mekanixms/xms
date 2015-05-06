@@ -1,4 +1,4 @@
-<app>
+<app outputxsl="xsl/aws2html5.xsl">
   
   <client>
     <header/>

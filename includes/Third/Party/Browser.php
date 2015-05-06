@@ -1,5 +1,5 @@
-<?php
-namespace Third\Party;
+<?php namespace Third\Party;
+
 /**
  * File: Browser.php
  * Author: Chris Schuld (http://chrisschuld.com/)
