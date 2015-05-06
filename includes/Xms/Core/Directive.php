@@ -15,6 +15,7 @@ use DOMNode;
 /*
  * Class to create and handle Xms directives
  */
+
 class Directive
 {
 
@@ -69,5 +70,3 @@ class Directive
             return FALSE;
     }
 }
-
-?>

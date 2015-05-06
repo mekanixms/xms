@@ -108,5 +108,3 @@ use EventHandlerPredefinedMethods;
         }
     }
 }
-
-?>

@@ -1416,5 +1416,3 @@ abstract class CommonXml extends XmsOverload
         );
     }
 }
-
-?>

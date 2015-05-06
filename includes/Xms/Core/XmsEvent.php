@@ -180,5 +180,3 @@ abstract class XmsEvent implements XmsEventSupport
             }
     }
 }
-
-?>

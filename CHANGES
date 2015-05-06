@@ -1,3 +1,8 @@
+5.0.3
+- removed closing tags at the end of php files
+5.0.2
+- Utils::clientrun fixed to return nodes in normal order
+- phpunit test for above
 5.0 rc14
 - Xms::XMS_SERVER_CONSOLE observable instance property to log as running
 - $GLOBALS["XMS_SERVER_CONSOLE"] removed

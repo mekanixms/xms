@@ -208,5 +208,3 @@ class Html extends CommonXml implements HtmlInterface
         );
     }
 }
-
-?>

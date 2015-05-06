@@ -654,4 +654,34 @@ class XmsTest extends PHPUnit_Framework_TestCase
             5 => '/client/content/strong'
         ));
     }
+
+    public function testDirectiveDFOrder()
+    {
+        print "\n";
+        print "Testing directive document fragment return order\n";
+
+        $xms = new Xms\Core\Xms([
+            "XMS_INPUT" => "/?use=test/docs.ex.directive.df.order.1.xml"
+        ]);
+
+        $xms->run();
+
+        $out = $xms->get();
+
+        $html = new Xms\Core\Html($out);
+        $html("//*")->hasClass("case")->each(function($el, $ext) {
+            $ext[0][] = $this->nodeName;
+        }, [&$extCase]);
+        $this->assertEquals($extCase, ["div", "span"]);
+
+        $html("//*")->hasClass("phppi")->each(function($el, $ext) {
+            $ext[0][] = $this->nodeName;
+        }, [&$extPi]);
+        $this->assertEquals($extPi, ["div", "span"]);
+
+        $html("//*")->hasClass("localimport")->each(function($el, $ext) {
+            $ext[0][] = $this->nodeName;
+        }, [&$extImport]);
+        $this->assertEquals($extImport, ["div", "span"]);
+    }
 }

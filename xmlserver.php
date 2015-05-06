@@ -190,4 +190,3 @@ switch ($_POST["cat"]) {
 		session_regenerate_id(true);
 		break;
 }
-?>

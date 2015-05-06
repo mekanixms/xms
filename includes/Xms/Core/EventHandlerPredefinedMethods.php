@@ -211,5 +211,3 @@ trait EventHandlerPredefinedMethods
         $this->_XMS_DATA_["EVENT_CALLBACK"] = array();
     }
 }
-
-?>

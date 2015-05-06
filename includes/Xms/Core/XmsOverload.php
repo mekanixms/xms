@@ -18,5 +18,3 @@ abstract class XmsOverload
 
     use Overload;
 }
-
-?>

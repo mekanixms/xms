@@ -480,5 +480,3 @@ use XmsHelpers;
         return sizeof($this->childNodes);
     }
 }
-
-?>

@@ -122,5 +122,3 @@ class XmsHtml extends Html implements XmsEventHandler
         return sizeof($this->childNodes);
     }
 }
-
-?>

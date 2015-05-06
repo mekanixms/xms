@@ -129,5 +129,3 @@ class Xml extends CommonXml implements XmlInterface
         );
     }
 }
-
-?>

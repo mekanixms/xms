@@ -50,5 +50,3 @@ class XmsDomEvent extends XmsEvent implements XmsEventSupport
             }
     }
 }
-
-?>

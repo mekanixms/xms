@@ -106,7 +106,7 @@ class Browser
     const PLATFORM_ANDROID = 'Android';
     const OPERATING_SYSTEM_UNKNOWN = 'unknown';
 
-    public function Browser($userAgent = "")
+    public function __construct($userAgent = "")
     {
         $this->reset();
         if ($userAgent != "") {

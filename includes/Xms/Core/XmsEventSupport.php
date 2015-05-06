@@ -20,5 +20,3 @@ interface XmsEventSupport
 
     function propagate();
 }
-
-?>

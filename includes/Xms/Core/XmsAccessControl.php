@@ -38,5 +38,3 @@ class XmsAccessControl extends XmsXml
         return call_user_func_array($this->logic, array(&$this, $app, constant('XMS_USER_ACCESS_VAR')));
     }
 }
-
-?>

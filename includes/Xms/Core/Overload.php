@@ -294,5 +294,3 @@ trait Overload
         }
     }
 }
-
-?>

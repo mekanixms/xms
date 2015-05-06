@@ -40,5 +40,3 @@ use EventHandlerPredefinedMethods;
         return $this->childNodes;
     }
 }
-
-?>

@@ -41,5 +41,3 @@ interface XmsEventHandler
       public function removeChild();
      */
 }
-
-?>

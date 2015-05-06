@@ -116,5 +116,3 @@ class XmsXml extends Xml implements XmsEventHandler
         return sizeof($this->childNodes);
     }
 }
-
-?>

@@ -446,5 +446,3 @@ trait XmsHelpers
         $this->PARSERS[] = $tmpFilter;
     }
 }
-
-?>

@@ -62,5 +62,3 @@ class Router extends XmsXml
         
     }
 }
-
-?>

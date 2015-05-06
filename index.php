@@ -16,6 +16,5 @@ $XMS = new Xms\Core\Xms();
 $XMS->run();
 echo $XMS->get();
 
-//file_put_contents("DURATION", $XMS->TEMPLATE_FILE_SOURCE . "\t\t\t\t\t" . sprintf('%f', $XMS->getET()) . "\n", FILE_APPEND);
-
-?>
+if(AWS_DEBUG)
+    $XMS->XMS_SERVER_CONSOLE = "\t\t\t".$XMS->TEMPLATE_FILE_SOURCE." ET:".$XMS->getET()."\n";
