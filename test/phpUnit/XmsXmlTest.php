@@ -96,20 +96,33 @@ class XmsXmlTest extends PHPUnit_Framework_TestCase
         $a->parentNode->childNodes[] = $a;
 
         print "Testing method binding\n";
-        $a->testMethod = function() {
+        $a->testMethod = function($p1, $p2) {
+            $this->parentNode->param1 = $p1;
+            $this->parentNode->param2 = $p2;
             return get_class($this);
         };
-        $a->bind("before", "testMethod", function() {
+        $a->bind("before", "testMethod", function($p1, $p2) {
+            $this->parentNode->beforeParam1 = $p1;
+            $this->parentNode->beforeParam2 = $p2;
             $this->parentNode->beforeTestMethod = get_class($this);
         });
-        $a->bind("after", "testMethod", function() {
+        $a->bind("after", "testMethod", function($p1, $p2) {
+            $this->parentNode->afterParam1 = $p1;
+            $this->parentNode->afterParam2 = $p2;
             $this->parentNode->afterTestMethod = get_class($this);
         });
-//test if the closure was bound to our instance
-        $this->assertInstanceOf($a->testMethod(), $a, "failed");
-//test if parent was notified on the execution
+        //test if the closure was bound to our instance
+        $this->assertInstanceOf($a->testMethod("param1", "param2"), $a, "failed");
+        
+        //test if parent was notified on the execution
         $this->assertInstanceOf($a->parentNode->beforeTestMethod, $a, "failed");
         $this->assertInstanceOf($a->parentNode->afterTestMethod, $a, "failed");
+        
+        //test if parameters are used to invoke before and after callbacks
+        $this->assertEquals($a->parentNode->beforeParam1, "param1");
+        $this->assertEquals($a->parentNode->beforeParam2, "param2");
+        $this->assertEquals($a->parentNode->afterParam1, "param1");
+        $this->assertEquals($a->parentNode->afterParam2, "param2");
     }
 
     /**
@@ -134,16 +147,19 @@ class XmsXmlTest extends PHPUnit_Framework_TestCase
             $this->callbackAlwaysBoundTo = get_class($this);
         });
         $a->testProperty = rand();
-//test if property was trasnfered to parent
+        
+        //test if property was trasnfered to parent
         $this->assertTrue($a->testProperty == $a->parentNode->iKnowMyChild["new"], "failed");
-//test if new value is not the old value
+        
+        //test if new value is not the old value
         $this->assertFalse($a->testProperty == $a->parentNode->iKnowMyChild["old"], "failed");
-//test if the closure was bound to our instance
+        
+        //test if the closure was bound to our instance
         $this->assertInstanceOf($a->callbackAlwaysBoundTo, $a, "failed");
-
         $a->unbindAll("change", "testProperty", $onChange);
         $a->testProperty = "other value";
-//test if property was trasnfered to parent
+
+        //test if property was trasnfered to parent
         $this->assertFalse($a->testProperty == $a->parentNode->iKnowMyChild["new"], "failed");
     }
 
@@ -168,9 +184,11 @@ class XmsXmlTest extends PHPUnit_Framework_TestCase
         $a->bind("after", "testMethod", function($value) {
             $this->parentNode->afterTestMethod = "after" . $value;
         });
-//test if the closure was bound to our instance
+
+        //test if the closure was bound to our instance
         $this->assertInstanceOf($a->testMethod("TEST"), $a, "failed");
-//test if parent was notified on the execution
+
+        //test if parent was notified on the execution
         $this->assertTrue($a->parentNode->beforeTestMethod == "beforeTEST", "failed");
         $this->assertTrue($a->parentNode->afterTestMethod == "afterTEST", "failed");
 

@@ -117,7 +117,7 @@ An example is worth a thousand words…
 ```
 
 
-Xms uses it's own xml editor called Designer, enforcing the developers to code online, without needeing any other tool.
+Xms uses it's own xml editor called Designer, enforcing the developers to code online, without needing any other tool.
 
 Additional resources can be found on my website http://aws-dms.com
 Classes documentation can be found at http://doc.aws-dms.com
