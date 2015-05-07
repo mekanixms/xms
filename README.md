@@ -63,15 +63,15 @@ $myDOMElement->myMethod("someValue");
 
 An example is worth a thousand words…
 ```xml
-<app>
+<app outputxsl="xsl/aws2html5.xsl">
     <init>
         <?aws 
             //set an event handler
-            $el->topmost()->on("done",function($evt){
+            $el->topmost()->on("anEvent",function($evt){
             //do something
             });
 
-            //initialize the observable property
+            //initialize the observable instance property
             $el->topmost()->someInstanceProperty = "";
 
             $el->topmost()->bind("change","someInstanceProperty",function(){
@@ -85,7 +85,8 @@ An example is worth a thousand words…
 			<?js console.log("running some javascript");?>
 		</header>
         <content>
-            <strong>                <?php 
+            <strong>
+                <?php 
                     $el->trigger("anEvent");
                     $el->topmost()->someInstanceProperty = "newValue";
 
@@ -93,7 +94,8 @@ An example is worth a thousand words…
 
                     $el->appendChild($newTextContent);
 
-                    return "<em>em text</em> too";?></strong>
+                    return "<em>em text</em> too";?>
+             </strong>
             <case>
                 <filter>
                     <?aws if($condition) return "show";?>
@@ -108,10 +110,18 @@ An example is worth a thousand words…
         <somecode>
             <strong>
                 <?php //do something ?></strong>
-            <import source="http://someotherplace/nePage.html" importashtml="" xpath="//table[1]"/>
+            <import source="http://someotherplace/Page.html" importashtml="" xpath="//table[1]"/>
         </somecode>
     </templates>
 </app>
 ```
+
+
+Xms uses it's own xml editor called Designer, enforcing the developers to code online, without needeing any other tool.
+
+Additional resources can be found on my website http://aws-dms.com
+Classes documentation can be found at http://doc.aws-dms.com
+
+Since the documentation is a work in progress don't hesitate to ask any questions directly via email or on the website. 
 
 [![Build Status](https://travis-ci.org/mekanixms/xms.svg?branch=master)](https://travis-ci.org/mekanixms/xms)
