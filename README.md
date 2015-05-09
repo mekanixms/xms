@@ -1,6 +1,10 @@
 ### Xms
 
-Xms is a php content management framework using xml as web application support. It provides an event based DOM infrastructure as well as observable methods and properties.
+**Requirements:**
+- php 5.4 or above
+- php xsl extension installed and loaded
+
+**Xms** is a php *content management framework using xml as web application support*. It provides an event based DOM infrastructure as well as observable methods and properties.
 
 Why xml? Easy, is fast, reliable and everywhere...
 
@@ -22,12 +26,12 @@ and take advantage of the features above: events and observable methods and prop
 Note:
 - for above example $el is the parentNode of the php processing instruction
 
-Ok, what about observable methods and properties? By default, the native objects in php don't offer support to add instance properties and methods, so:
+Ok, what about observable methods and properties? By default, the native objects in php dont offer support to add instance properties and methods, so:
 ```php
 //$myDOMElement is an instance of DOMElement
 $myDOMElement->myVar = "some val";
 ```
-Would not work and trigger a notice "*PHP Notice:  Undefined property: DOMElement::$myVar in...*".
+Would not work and trigger a notice "*PHP Notice:  Undefined property: DOMElement::$testProp in...*".
 
 But with Xms
 ```php
@@ -118,6 +122,8 @@ An example is like a thousand words…
     </templates>
 </app>
 ```
+
+Defining your own directives is easy: either add them to Xms class directly in $builtinDirectives public property or either at runtime. Currently supported directive types are: DOMElement and DOMProcessingInstruction. 
 
 As *case, import and php processing instruction* are client directives, in Xms we have application directives to help us initialize the application or use additional resources.
 - *remotetemplate* - think that you might already have an application and need to do only some minor changes, basically offer some sort of mirror - this is when remotetemplate comes in place; see *test/docs.ex.remotetemplate.1.xml*,*test/docs.ex.remotetemplate.2.xml*,*test/docs.ex.remotetemplate.3.xml*; Note: - I am not responsible for whatpeople are using this for - this is a functionality implemented to help not harm anyone
