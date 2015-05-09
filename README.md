@@ -22,12 +22,12 @@ and take advantage of the features above: events and observable methods and prop
 Note:
 - for above example $el is the parentNode of the php processing instruction
 
-Ok, what about observable methods and properties? By default, the native objects in php dont offer support to add instance properties and methods, so:
+Ok, what about observable methods and properties? By default, the native objects in php don't offer support to add instance properties and methods, so:
 ```php
 //$myDOMElement is an instance of DOMElement
 $myDOMElement->myVar = "some val";
 ```
-Would not work and trigger a notice "*PHP Notice:  Undefined property: DOMElement::$testProp in...*".
+Would not work and trigger a notice "*PHP Notice:  Undefined property: DOMElement::$myVar in...*".
 
 But with Xms
 ```php
