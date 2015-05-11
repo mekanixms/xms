@@ -1,5 +1,8 @@
 5.0.3
 - removed closing tags at the end of php files
+- fixed index.php to require_once on mod_rewrite was a conflict because we had require in bothdefaults.php and index.php
+- slight changes on router.xml
+- filter_input on urlhandler
 5.0.2
 - Utils::clientrun fixed to return nodes in normal order
 - phpunit test for above

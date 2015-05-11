@@ -26,13 +26,13 @@ include ('defaults.php');
     //holds the keys to remove from REQUEST URI
     $doesNotExists = array();
     //get  working directory
-    $pi = pathinfo($_SERVER["SCRIPT_NAME"]);
+    $pi = pathinfo(filter_input(INPUT_SERVER, "SCRIPT_NAME"));
     $WD = $pi['dirname'];
     //on windows root is \
     if ($WD == '\\')
         $WD = "/";
     //remove the query string
-    $URL = explode("?", $_SERVER["REQUEST_URI"]);
+    $URL = explode("?", filter_input(INPUT_SERVER, "REQUEST_URI"));
     //remove WD
     $rwd = substr_replace($URL[0], "", strpos($URL[0], $WD), strlen($WD));
     //remove trailing and ending slashes so not to have empty elements in the array
@@ -51,7 +51,7 @@ include ('defaults.php');
             $doesNotExists[] = array_shift($URL);
     }
     //get the new URL by removing of the fake keys
-    $URL = str_replace("/" . implode("/", $doesNotExists), "", $_SERVER["REQUEST_URI"]);
+    $URL = str_replace("/" . implode("/", $doesNotExists), "", filter_input(INPUT_SERVER, "REQUEST_URI"));
 
     if ($exists) {
         //debugging only
@@ -70,7 +70,7 @@ include ('defaults.php');
         //php as CGI or not on apache !!! NOT SAFE !!!
         else {
             //build content based on the request methid
-            switch ($_SERVER["REQUEST_METHOD"]) {
+            switch (filter_input(INPUT_SERVER, "REQUEST_METHOD")) {
                 case 'GET' :
                     $content = http_build_query($_GET, '', '&');
                     break;
@@ -80,7 +80,7 @@ include ('defaults.php');
                     break;
             }
 
-            $opts = array('http' => array('method' => $_SERVER["REQUEST_METHOD"], 'content' => $content));
+            $opts = array(filter_input(INPUT_SERVER, "REQUEST_SCHEME") => array('method' => filter_input(INPUT_SERVER, "REQUEST_METHOD"), 'content' => $content));
 
             $context = stream_context_create($opts);
             header("Content-Type: " . Utils::mime($URL_info["extension"]));
@@ -89,8 +89,8 @@ include ('defaults.php');
             ob_clean();
             flush();
             //et the scheme: not safe it it might not be transmitted by the client side
-            $parsed_url = parse_url($_SERVER['HTTP_REFERER']);
-            readfile($parsed_url["scheme"] . "://" . $_SERVER["HTTP_HOST"] . $URL, 0, $context);
+            $parsed_url = parse_url(filter_input(INPUT_SERVER, "HTTP_REFERER"));
+            readfile($parsed_url["scheme"] . "://" . filter_input(INPUT_SERVER, "HTTP_HOST") . $URL, 0, $context);
             exit;
         }
     } else

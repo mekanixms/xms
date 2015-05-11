@@ -9,7 +9,7 @@
  * Date: 2010-10-24
  */
 session_start();
-require 'defaults.php';
+require_once 'defaults.php';
 
 $XMS = new Xms\Core\Xms();
 

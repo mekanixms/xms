@@ -77,43 +77,46 @@ else {
 }?></MODEL3><MODEL4><?aws // ROUTER MODEL 4
 //parameters: $router,$route,$query,$accessControl
 // a more advanced router for mod rewrite
-function getRouteCode($el) {
+function getRouteCode($el)
+{
     foreach ($el->childNodes as $child)
-	if ($child -> nodeType == 7)
-	    $toRet = $child -> data;
+        if ($child->nodeType == 7)
+            $toRet = $child->data;
 
     $f = create_function('$el', $toRet);
     $f($el);
 }
-
 //extract the first element in route
-$chain = explode("/", $router -> getPathInfo($route));
+$chain = explode("/", $router->getPathInfo($route));
 
+if (!empty($chain[0])) {
 //looks for a route element (inside this file) bounded to above value and if found execute the code inside
-$router -> q("/router/route[@bind[contains(.,'" . $chain[0] . "')]]") -> each('getRouteCode');
+    $router->q("/router/route[@bind[contains(.,'" . $chain[0] . "')]]")->each('getRouteCode');
 
 //if it had a function, get the path from target attribute
-if (get_class($router ->get(0)) == "DOMElement")
-    $r = $router ->get(0) -> getAttribute('target');
-else
+    if (get_class($router->get(0)) == "DOMElement")
+        $r = $router->get(0)->getAttribute('target');
+    else
     // else get the application with name chain[0]
-    $r = "templates/" . $chain[0] . ".xml";
+        $r = "templates/" . $chain[0] . ".xml";
+} else
+    $r = AWS_HOME;
 
 if (!file_exists($r))
     $awsappxmltemplateFile = AWS_ERROR_404;
 else
     $awsappxmltemplateFile = $r;
 
-$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile; 
+$router->topmost()->TEMPLATE_FILE_SOURCE = $awsappxmltemplateFile;
 
 if (constant('AWS_USER_ACCESS_DISABLED'))
     return file_get_contents($awsappxmltemplateFile);
 else {
-    if ($accessControl -> hasAccess($awsappxmltemplateFile))
-	return file_get_contents($awsappxmltemplateFile);
+    if ($accessControl->hasAccess($awsappxmltemplateFile))
+        return file_get_contents($awsappxmltemplateFile);
     else
-	return file_get_contents(AWS_ERROR_403);
-}?><route bind="temp.php"><?aws $el->setAttribute('target','templates/index.xml');?></route><route bind="designer"><?aws $el->setAttribute('target','templates/designer.xml');?></route></MODEL4></templates><?aws // ROUTER MODEL 1 / DEFAULT
+        return file_get_contents(AWS_ERROR_403);
+}?><route bind="designer"><?aws $el->setAttribute('target','templates/designer.xml');?></route></MODEL4></templates><?aws // ROUTER MODEL 1 / DEFAULT
 //parameters: $router,$route,$query,$accessControl
 // default router for backward compatibility
 //works both with mod rewrite and without it
