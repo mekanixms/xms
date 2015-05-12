@@ -200,7 +200,7 @@ trait XmsHelpers
                         //using $mode one of: append,prepend,before,after,replace
                         switch ($mode) {
                             case "append":
-                                $t->appendChild($docFragment->cloneNode(true), $t);
+                                $t->appendChild($docFragment->cloneNode(true));
                                 break;
                             case "prepend":
                                 $t->insertBefore($docFragment->cloneNode(true), $t->firstChild);
