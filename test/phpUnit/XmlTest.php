@@ -295,4 +295,18 @@ class XmlTest extends PHPUnit_Framework_TestCase
         $client = $a("//client")->get(0);
         $this->assertEquals($client->nodeName, "client", "failed");
     }
+
+    public function testElementsSequence()
+    {
+        print "\n";
+        print "Testing Utils::createElementsSequence\n";
+        $c = '<app><client/></app>';
+        $a = new Xms\Core\Xml($c);
+        $app = $a("/app")->get(0);
+
+        Xms\Core\Utils::createElementsSequence("client/header/link", $app);
+        Xms\Core\Utils::createElementsSequence("TEST/client/header/link", $app);
+
+        $this->assertEquals($app->C14N(), '<app><client><header><link></link></header></client><TEST><client><header><link></link></header></client></TEST></app>');
+    }
 }

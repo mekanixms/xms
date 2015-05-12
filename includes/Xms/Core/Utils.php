@@ -15,6 +15,7 @@ use Closure;
 /*
  * Utilities
  */
+
 abstract class Utils
 {
 
@@ -209,6 +210,31 @@ abstract class Utils
     static function mime($extension)
     {
         return self::$mime_types[$extension];
+    }
+
+    static function createElementsSequence($sequence, &$el)
+    {
+        $explodedSeq = explode("/", $sequence);
+        $elementName = trim(array_shift($explodedSeq));
+
+        if ($el->hasChildNodes())
+            foreach ($el->childNodes as $child) {
+                if ($child->nodeType === XML_ELEMENT_NODE) {
+                    if ($child->localName == $elementName) {
+                        $found = $child;
+                    }
+                }
+            }
+
+        if (!$found instanceof DOMElement) {
+            $element = $el->appendChild($el->ownerDocument->createElement($elementName));
+        } else
+            $element = $found;
+
+        if (sizeof($explodedSeq) == 0)
+            return $element;
+        else
+            return self::createElementsSequence(implode("/", $explodedSeq), $element);
     }
 
     static function clientrun(&$el)

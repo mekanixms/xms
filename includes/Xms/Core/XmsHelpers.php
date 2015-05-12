@@ -134,6 +134,14 @@ trait XmsHelpers
     {
         $hasCheck = false;
 
+        if ($el->hasAttribute("mode"))
+            $mode = trim($el->getAttribute("mode"));
+        else
+            $mode = "append";
+        //$mode one of append,prepend,before,after,replace
+
+        $parser = new Xml($el);
+
         //daca nu avem sursa  folosim drept sursa default template-ul
         if ($el->hasAttribute("source")) {
             $importFilterDocumentFromContent = file_get_contents($el->getAttribute("source"));
@@ -174,24 +182,48 @@ trait XmsHelpers
             if (!$hasCheck || $hasCheck && $checkedFunctionReturnValue) {
                 //inlocuim elementul import cu fragmentul generat
                 if ($el->hasAttribute("where")) {
-                    $last = false;
-                    $pathMembers = explode("/", $el->getAttribute("where"));
-                    if (sizeof($pathMembers) > 0) {
-                        foreach ($pathMembers as $k => $member) {
-                            if ($member)
-                                if (!$last)
-                                    $last = $el->ownerDocument->createElement($member, " ");
-                                else {
-                                    $newChild = $el->ownerDocument->createElement($member, " ");
-                                    $last->appendChild($newChild);
-                                    $last = $newChild;
-                                }
-                        }
-                        $last->appendChild($docFragment);
-                        $el->parentNode->replaceChild($last, $el);
+                    //daca avem @where
+
+                    $parser($el->getAttribute("where"))->to($target);
+                    //get targets if any, from query @where
+
+                    if (sizeof($target) == 0) {
+                        //if no existing targets, create the sequence from @where
+                        $target = [Utils::createElementsSequence($el->getAttribute("where"), $parser("/app")->get(0))];
                     }
-                } else
+                }
+
+                if (is_array($target) && sizeof($target) > 0) {
+                    //if we have targets defined from @where
+                    foreach ($target as $t) {
+                        //replace each with a clone
+                        //using $mode one of: append,prepend,before,after,replace
+                        switch ($mode) {
+                            case "append":
+                                $t->appendChild($docFragment->cloneNode(true), $t);
+                                break;
+                            case "prepend":
+                                $t->insertBefore($docFragment->cloneNode(true), $t->firstChild);
+                                break;
+                            case "before":
+                                $t->parentNode->insertBefore($docFragment->cloneNode(true), $t);
+                                break;
+                            case "after":
+                                $t->parentNode->insertBefore($docFragment->cloneNode(true), $t->nextSibling);
+                                break;
+                            case "replace":
+                                $t->parentNode->replaceChild($docFragment->cloneNode(true), $t);
+                                break;
+                        }
+                    }
+
+                    $el->parentNode->removeChild($el);
+                    //and delete use directive
+                } else {
+                    //no targets so replace the directive with df
+                    //@mode doesn't have any effect
                     $el->parentNode->replaceChild($docFragment, $el);
+                }
             }
         }
     }
