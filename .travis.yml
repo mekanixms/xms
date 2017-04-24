@@ -9,6 +9,6 @@ php:
 
 before_script:
     # php module
-    - echo "extension = xsl.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    #- echo "extension = xsl.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 script: phpunit
