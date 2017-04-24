@@ -1,0 +1,16 @@
+<app outputxsl="xsl/aws2html.xsl"><bookmarks/><init><return>FILES</return><?aws $out = Array();
+function find_all_files($dir) 
+{ 
+    $root = scandir($dir); 
+    foreach($root as $value) 
+    { 
+        if($value === '.' || $value === '..') {continue;} 
+        if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;}  
+    } 
+    return $result; 
+}
+foreach(find_all_files("test") as $file){
+array_push($out,pathinfo($file));
+}
+
+return $out;?></init><client><content><table id="tests"><tr unit=""><td reference="filename"/><td reference="extension"/></tr><?php $el->setAttribute("CLOSEMOST",get_class($el->closest()));?></table></content></client><filters><dom><filter><domiterator>//*[@id='tests']<norecords><?aws return "<tr><td colspan='2'>NONE</td></tr>";?></norecords></domiterator><?aws return $GLOBALS["APPINIT"]["FILES"];?></filter></dom></filters><templates/></app>

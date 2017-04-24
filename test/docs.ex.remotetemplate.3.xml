@@ -1,0 +1,12 @@
+<app outputxsl="xsl/aws2xhtml.xsl">
+  <bookmarks/>
+  
+<remotetemplate><runfirst><?aws $GLOBALS["RT_TARGET"] = "http://doc.aws-dms.com";
+
+if(!$_GET["thisone"]) $el->setAttribute("source",$GLOBALS["RT_TARGET"]);
+else $el->setAttribute("source",$GLOBALS["RT_TARGET"]."/".$_GET["thisone"]);?></runfirst></remotetemplate><filters><dom><filter><nodelist>//style[@rel='stylesheet']</nodelist><?aws function changeStylesHref(&$e)
+{
+$e->setAttribute("href",$GLOBALS["RT_TARGET"]."/".$e->getAttribute("href"));
+}
+
+$el->each("changeStylesHref");?></filter></dom></filters><parsers><item><xpath>//a[@href]</xpath><callback><?aws $el->setAttribute("href","/?use=".$el->topmost()->TEMPLATE_FILE_SOURCE."&thisone=".$el->getAttribute("href"));?></callback></item><item><xpath>//load[@src]|//img</xpath><callback><?aws $el->setAttribute("src",$GLOBALS["RT_TARGET"]."/".$el->getAttribute("src"));?></callback></item><item><xpath>//*[@rel='stylesheet']</xpath><callback><?aws $el->setAttribute("href",$GLOBALS["RT_TARGET"]."/".$el->getAttribute("href"));?></callback></item></parsers></app>

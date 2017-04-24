@@ -1,0 +1,3 @@
+<app outputxsl="xsl/aws2html5.xsl"><bookmarks/><init/><client><content><case><filter><?aws if(MOD_REWRITE_ENABLED)
+return "ENABLED";
+else return "default";?></filter><default>MOD_REWRITE_ENABLED disabled</default><ENABLED>MOD_REWRITE_ENABLED</ENABLED></case></content></client></app>
