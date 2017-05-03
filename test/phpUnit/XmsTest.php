@@ -1,6 +1,6 @@
 <?php
 
-class XmsTest extends PHPUnit_Framework_TestCase
+class XmsTest extends PHPUnit\Framework\TestCase
 {
 
     public function setUp()
