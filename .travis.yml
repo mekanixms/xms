@@ -1,7 +1,6 @@
 language: php
 
 php:
-  #- 5.4 - commented because xsl doesn't load on travis server for unknown reason
   - 5.5
   - 5.6
 
