@@ -35,7 +35,7 @@ class Xml extends CommonXml implements XmlInterface
 
     public $encoding;
 
-    public function __construct(&$context, $encoding = 'UTF-8')
+    public function __construct(&$context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;

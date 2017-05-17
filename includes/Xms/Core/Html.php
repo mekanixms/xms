@@ -44,7 +44,7 @@ class Html extends CommonXml implements HtmlInterface
      * @param  string $encoding - optional - default charset
      * @return Html
      */
-    public function __construct(&$context, $encoding = 'UTF-8')
+    public function __construct(&$context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;

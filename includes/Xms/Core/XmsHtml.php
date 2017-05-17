@@ -38,7 +38,7 @@ class XmsHtml extends Html implements XmsEventHandler
      * @param  string $encoding - optional - default charset
      * @return XmsHtml
      */
-    public function __construct(&$context, $encoding = 'UTF-8')
+    public function __construct(&$context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;

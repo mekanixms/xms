@@ -37,7 +37,7 @@ class XmsXml extends Xml implements XmsEventHandler
      * @param  string $encoding - optional - default charset
      * @return XmsXml
      */
-    public function __construct(&$context, $encoding = 'UTF-8')
+    public function __construct(&$context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;

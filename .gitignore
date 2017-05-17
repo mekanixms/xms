@@ -2,3 +2,4 @@ nbproject
 mockup
 cache/*
 composer.lock
+vendor/*
