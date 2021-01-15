@@ -149,8 +149,8 @@ Multilanguage support is a work in progress however Xms uses lang.xml to match p
 
 Xms uses it's own xml editor called **Designer**, enforcing the developers to code online, without needing any other tool.
 
-Additional resources can be found on my website http://aws-dms.com
-Classes documentation can be found at http://doc.aws-dms.com
+Additional resources can be found on my website http://awsdms.casa-lucan.ro/
+Classes documentation can be found at http://awsdms.casa-lucan.ro/
 
 Since the documentation is a work in progress don't hesitate to ask any questions directly via email or on the website. 
 
