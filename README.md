@@ -139,7 +139,7 @@ In Xms 5.x we have 3 filters:
 
 Usually filters are executed automatically after Xms executes all directives in client (/app/client) however if needed a filter can be invoked from your code to execute when needed only; for a filter to be invokable it has to have the invokable class and an id set to it. See *test/docs.ex.import.3.xml* 
 
-Last but not least, Xms has what I call *parsers* which are very similar with xpath filter but they *executed for all applications* - see parsers.xml in the root directory of Xms; there is also the possibility to define application parsers in /app/parsers however they are rarely used since xpath filter provide the same functionality
+Last but not least Xms has, what I call, *parsers* which are very similar with xpath filter but they *executed for all applications* - see parsers.xml in the root directory of Xms; there is also the possibility to define application parsers in /app/parsers however they are rarely used since xpath filter provide the same functionality
 
 Like all other cm frameworks, Xms has a router which is to be found in *router.xml*; there are a couple of models but you have all freedom to make your own.
 
@@ -147,11 +147,11 @@ Like all other cm frameworks, Xms has a router which is to be found in *router.x
 
 Multilanguage support is a work in progress however Xms uses lang.xml to match predefined dom elements in the client side and alter the content - very likely this approch to change in later releases.
 
-Xms uses it's own xml editor called **Designer**, enforcing the developers to code online, without needing any other tool.
+Xms uses it's own xml editor called **Designer**, empowering the developers to code online, without needing any other tool.
 
 Additional resources can be found on my website http://awsdms.casa-lucan.ro/
 Classes documentation can be found at http://awsdms.casa-lucan.ro/doc/
 
 Since the documentation is a work in progress don't hesitate to ask any questions directly via email or on the website. 
 
-[![Build Status](https://travis-ci.org/mekanixms/xms.svg?branch=master)](https://travis-ci.org/mekanixms/xms)
+[![Build Status](https://travis-ci.com/mekanixms/xms.svg?branch=master)](https://travis-ci.com/mekanixms/xms)
