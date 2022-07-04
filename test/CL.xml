@@ -1,0 +1,4 @@
+<app outputxsl="xsl/aws2html5.xsl"><bookmarks/><init><?aws $GLOBALS["BROWSER"] = new Third\Party\Browser();
+file_put_contents("BR",$GLOBALS["BROWSER"]);?></init><client><case><filter><?aws if($GLOBALS["BROWSER"]->isMobile())
+return "mobile";
+else return "desktop";?></filter><desktop><header><?js console.log("DESKTOP");?></header><content><strong>DESKTOP</strong></content></desktop><mobile><header><?js console.log("MOBILE");?></header><content><strong>MOBILE</strong></content></mobile></case></client></app>

@@ -1,0 +1,38 @@
+5.0.4
+- Improved use directive: imports @xpath from @source and add to @where as defined by @mode
+    @mode attribute one of append,prepend,before,after,replace; default append
+- Utils::createElementsSequence() method
+5.0.3
+- removed closing tags at the end of php files
+- fixed index.php to require_once on mod_rewrite was a conflict because we had require in bothdefaults.php and index.php
+- slight changes on router.xml
+- filter_input on urlhandler
+5.0.2
+- Utils::clientrun fixed to return nodes in normal order
+- phpunit test for above
+5.0 rc14
+- Xms::XMS_SERVER_CONSOLE observable instance property to log as running
+- $GLOBALS["XMS_SERVER_CONSOLE"] removed
+5.0 rc14
+- removed nodelist, match, matchiterator,marker and eval
+5.0 rc8
+- Directive gets the callback with Directive::getDirectiveHandler; now easy to define new directives
+- Utils::clientrun new version based on above, checks if each node is a directive
+- js#pi defined and removed from xsl
+5.0 rc7
+- mod rerwite detection works now
+- minor changes on Xms
+5.0 rc6
+- EventHandlerPredefinedMethods::closemost() renamed EventHandlerPredefinedMethods::closest()
+- Xms::getET - execution time
+- Xms::builtinDirectives property to define the directives
+- Directive::getDirectiveHandlers and Directive::isDirective static methods
+5.0 rc5
+- XmsAccessControl extends XmsXml and is child of Xms
+- Router extends XmsXml and is child of Xms
+- Utils::appConfig() moved to Xms::appConfig()
+- EventHandlerPredefinedMethods::closemost()
+- Utils::appconfig now Xms::appConfig
+- appConfig returns json if needed
+- $GLOBALS["TEMPLATE_FILE_SOURCE"] now Xms::TEMPLATE_FILE_SOURCE
+- $GLOBALS["appName"] now Xms::name

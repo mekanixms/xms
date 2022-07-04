@@ -1,0 +1,6 @@
+<app>
+  <bookmarks><bookmark name="FIRST APP RELATED FILTER">app:eq(0)&gt;parsers:eq(0)&gt;item:eq(0)</bookmark><bookmark name="TARGET OF FIRST APP RELATED FILTER">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#footer</bookmark></bookmarks>
+  <parsers><item><xpath>//div[@id="footer"]</xpath><callback><?aws $text = $el->ownerDocument->createTextNode(get_class($el->topmost())." ".Xms\Core\Xms::VERSION);
+$el->appendChild($text);?></callback><check><?aws return TRUE;?></check></item>
+  </parsers>
+<client><content><div id="footer"/></content></client></app>

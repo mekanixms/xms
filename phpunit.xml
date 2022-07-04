@@ -1,0 +1,16 @@
+<phpunit 
+    bootstrap="includes/autoload.php"
+    convertNoticesToExceptions="false"
+    convertWarningsToExceptions="false"
+>
+    <php>
+        <ini name="error_reporting" value="~E_NOTICES"/>
+    </php>
+    <testsuites>
+        <testsuite name="Xms">
+            <file>test/phpUnit/XmlTest.php</file>
+            <file>test/phpUnit/XmsXmlTest.php</file>
+            <file>test/phpUnit/XmsTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

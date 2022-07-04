@@ -1,0 +1,7 @@
+<app outputxsl="xsl/aws2html.xsl"><client>
+    <header/>
+    <content>
+      <div><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?><div><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?><div><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?><div><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?><strong><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?></strong></div></div></div></div>
+    <strong><?php $el->topmost()->EXECUTION_ORDER = $el->getNodePath();?></strong></content>
+  </client>
+<bookmarks><bookmark name="MAIN">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div:eq(0)</bookmark></bookmarks></app>

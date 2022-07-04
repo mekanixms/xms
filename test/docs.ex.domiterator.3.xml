@@ -1,0 +1,13 @@
+<app>
+  
+  <client>
+    
+    <content><b>TEST</b><?php $c = Xms\Core\Xms::_create_function($el, '&$el', 'if($el->hasAttribute("modtype") && $el->getAttribute("modtype")=="append") return true; else return false;');
+
+$el->topmost()->CLIENT->q("//b")->append("<i>APPEND</i>")->attr("TEST","ATTR")->prepend("<i>PREPEND</i>")->before("<i>BEFORE</i>")->after("<i>AFTER</i>");?></content>
+  </client>
+  
+  
+  
+  
+<bookmarks><bookmark name="FILTER SETUP">app:eq(0)&gt;filters:eq(0)&gt;dom:eq(0)&gt;filter:eq(0)&gt;domiterator:eq(0)</bookmark><bookmark name="INTERFACE OBJECTS SETUP">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator</bookmark><bookmark name="DB INIT">app:eq(0)&gt;init:eq(0)</bookmark><bookmark name="UNIT">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator&gt;tr:eq(1)</bookmark><bookmark name="a Reference inside another one">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator&gt;tr:eq(1)&gt;td:eq(3)</bookmark></bookmarks><templates/></app>

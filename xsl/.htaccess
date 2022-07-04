@@ -1,0 +1,4 @@
+<Files ~ "\.(xsl)$">
+order deny,allow
+deny from all
+</Files>

@@ -1,0 +1,29 @@
+<app outputxsl="xsl/aws2html.xsl"><bookmarks/><init><return>FILES</return><?aws $out = Array();
+function find_all_files($dir) 
+{ 
+    $root = scandir($dir); 
+    foreach($root as $value) 
+    { 
+        if($value === '.' || $value === '..') {continue;} 
+        if(is_file("$dir/$value")) {$result[]="$dir/$value";continue;} 
+        foreach(find_all_files("$dir/$value") as $value) 
+        { 
+            $result[]=$value; 
+        } 
+    } 
+    return $result; 
+}
+foreach(find_all_files("test") as $file){
+$pi = pathinfo($file);
+if($pi["extension"]=="xml" && substr_count($pi["filename"],"docs.ex.") != 0)
+array_push($out,$pi);
+}
+
+return $out;?></init><client><content><table id="tests"><tr unit=""><td reference="filename" skip="true"/><td reference="extension"/></tr></table></content></client><filters><dom><filter><domiterator>//*[@id='tests']<norecords><?aws return "<tr><td colspan='2'>NONE</td></tr>";?></norecords><eachnamedreference><filename><?aws $text = $el->ownerDocument->createTextNode($value);
+
+$a = $el->ownerDocument->createElement("a");
+$a->appendChild($text);
+$a->setAttribute("href","index.php?use=test/".$value.".xml");
+$a->setAttribute("target","_blank");
+$el->appendChild($a);
+return TRUE;?></filename></eachnamedreference></domiterator><?aws return $GLOBALS["APPINIT"]["FILES"];?></filter></dom></filters><templates/></app>

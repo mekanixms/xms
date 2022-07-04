@@ -1,0 +1,1 @@
+<app outputxsl="xsl/aws2html.xsl"><client><content><center><strong>XMS WORKS!!!</strong><br/><strong>PLEASE SET UP DESIGNER'S USER AND PASSWORD IN defaults.php!!!</strong><br/><a href="index.php?use=templates/designer.xml">Load Designer</a><br/><a href="index.php?use=test/run_tests.xml">Run tests</a></center></content></client><bookmarks/></app>

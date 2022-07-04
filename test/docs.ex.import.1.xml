@@ -1,0 +1,19 @@
+<app outputxsl="xsl/aws2html.xsl">
+  
+  <client>
+    <header/>
+    <content>
+      <div id="MAIN"><fieldset name="EX1"><legend>EX1</legend><import xpath="//app/templates/basicLocalImport/node()"/></fieldset><br/><fieldset name="EX2"><legend>EX2</legend><import source="test/docs.ex.phppi.1.xml" xpath="//app[1]/client[1]/content[1]/div[1]"/></fieldset><br/><fieldset name="EX3"><legend>EX3</legend><import importashtml="" source="http://casa-lucan.ro/tarife" xpath="//fieldset[@id='ian1iunie1']"/></fieldset><br/><fieldset name="EX4"><legend>EX4</legend><import cache="enabled" cachestorage="descriereCacheFile" clearcache="FALSE" importashtml="" source="http://casa-lucan.ro/descriere" xpath="//*[@id='facilitati']"/></fieldset><br/><fieldset name="EX5"><legend>EX5</legend><import importashtml="" xpath="//li[@name='import']/*"><eachnode><?aws if(rand()%2)
+return "TEST<br/>";
+else return true;?></eachnode><check><?aws return TRUE;?></check><filter><?aws function removeMe($el)
+{
+if($el->hasAttribute("remove")) $el->parentNode->removeChild($el);
+}
+
+$doc->q("//li")->each("removeMe");?></filter><source><?aws return file_get_contents("http://aws-dms.com/temp.php?use=templates/docs.xml");?></source></import></fieldset><br/><fieldset name="EX6"><legend>EX6</legend><import cache="enabled" cachestorage="descriereCacheFile" clearcache="FALSE" importashtml="" source="http://casa-lucan.ro/descriere" xpath="//*[@id='facilitati']"><runfirst><?aws $el->setAttribute("cachestorage",".descriereLaCerereCacheFile");
+$el->setAttribute("xpath","//*[@id='laCerere']");?></runfirst></import></fieldset><fieldset name="EX7"><legend>EX7</legend><import cache="enabled" cachestorage="descriereCacheFile" clearcache="FALSE" importashtml="" xpath="//*[@id='facilitati']"><runfirst><?aws $el->setAttribute("cachestorage","descriereLaCerereCacheFile");
+$el->setAttribute("xpath","//*[@id='laCerere']");?></runfirst><source><?aws return file_get_contents("http://casa-lucan.ro/descriere");?></source></import></fieldset></div>
+    </content>
+  </client>
+<bookmarks><bookmark name="MAIN">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN</bookmark><bookmark name="EX1_DIRECTIVE">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;import:eq(0)</bookmark><bookmark name="EX1_Template">app:eq(0)&gt;templates:eq(0)&gt;basicLocalImport:eq(0)</bookmark><bookmark name="EX2">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(1)&gt;import:eq(0)</bookmark><bookmark name="EX3">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(2)&gt;import:eq(0)</bookmark><bookmark name="EX4">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(3)&gt;import:eq(0)</bookmark><bookmark name="EX5">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(4)</bookmark><bookmark name="EX6">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div#MAIN&gt;fieldset:eq(5)</bookmark></bookmarks><templates><basicLocalImport><strong>This is a basic import from current file (if no source attribute defined)</strong><import source="test/docs.ex.phppi.1.xml" xpath="//app[1]/client[1]/content[1]/div[1]"/></basicLocalImport></templates><filters><dom><filter><xpath>//fieldset[6]</xpath><?aws $x = new Xms\Core\Xml($el);
+$x->q($el->getNodePath())->append('<font color="red">Using app filters to alter this imported content</font>');?></filter></dom></filters></app>

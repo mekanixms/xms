@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<app outputxsl="xsl/aws2html.xsl">
+  <client>
+    <content>
+      
+    <center><div style="width: 98%; height: 98%;"><strong style="border: 3px solid; border-color: orange; padding: 5px 5px 5px 5px; margin: 5px 5px 5px 5px;">FORBIDDEN</strong></div></center></content>
+  </client>
+<bookmarks/></app>

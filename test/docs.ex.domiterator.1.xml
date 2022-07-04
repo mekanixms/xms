@@ -1,0 +1,56 @@
+<app>
+  <init><return>PDO</return><?aws $el->topmost()->on("done",function(){
+$this->invokeFilters("fillTable");
+});
+
+return new PDO('sqlite:test/domiterator.db');?></init>
+  <client>
+    
+    <content><table id="DOMtblIterator">
+        <tr>
+          <th class="first">id</th>
+          <th>title</th>
+          <th>location</th>
+        <th>reference</th></tr>
+        <tr unit="">
+          <td reference="id" style="border: 1px solid;"/>
+          <td reference="name" style="border: 1px solid;" skip="" modtype="append">Name:</td>
+          <td reference="location" style="border: 1px solid;">HOME</td>
+        <td modtype="prepend" reference="position" skip="" style="border: 1px solid;"><button reference="id" skip="" style="float: right;"/></td></tr>
+</table></content>
+  </client>
+  
+  
+  
+  
+<bookmarks><bookmark name="FILTER SETUP">app:eq(0)&gt;filters:eq(0)&gt;dom:eq(0)&gt;filter:eq(0)&gt;domiterator:eq(0)</bookmark><bookmark name="INTERFACE OBJECTS SETUP">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator</bookmark><bookmark name="DB INIT">app:eq(0)&gt;init:eq(0)</bookmark><bookmark name="UNIT">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator&gt;tr:eq(1)</bookmark><bookmark name="a Reference inside another one">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;table#DOMtblIterator&gt;tr:eq(1)&gt;td:eq(3)</bookmark></bookmarks><templates/><filters>
+    
+    <dom>
+      
+      
+      <filter class="invokable" id="fillTable"><domiterator>//*[@id="DOMtblIterator"]<eachreference><?aws //params: $el,$label,$value,$recordset
+$el->setAttribute("WORKS",$label."=".$value);
+$el->setAttribute("recordsetTEST",$recordset["name"]);?></eachreference><eachnamedreference><id><?aws //params: $el,$label,$value,$recordset
+
+$el->setAttribute("EACHNAMEDREFERENCE","WORKS FOR ID");
+
+if($el->nodeName =="button") $el->appendChild($el->ownerDocument->createTextNode(" Great"));
+else
+$el->appendChild($el->ownerDocument->createTextNode(" #"));?></id><name><?aws //params: $el,$label,$value,$recordset
+
+$el->setAttribute("EACHNAMEDREFERENCE","WORKS FOR NAME");
+$el->setAttribute("anotherRecordsetTEST",$recordset["location"]);?></name><location><?aws //params: $el,$label,$value,$recordset
+
+$el->setAttribute("EACHNAMEDREFERENCE","WORKS FOR LOCATION");?></location></eachnamedreference><norecords><?aws //parameters: $doc (document of the CLIENT) and $data - data var of the XMS instance
+//returns DOMNode or text
+//return '<tr><td colspan="4">No records</td></tr>';
+//or
+$td = $doc->createElement("td");
+$td->setAttribute("colspan","4");
+$td->appendChild($doc->createTextNode("NONE"));
+$tr = $doc->createElement("tr");
+$tr ->appendChild($td);
+return $tr;?></norecords><check><?aws return true;?></check></domiterator><?aws return $GLOBALS["APPINIT"]["PDO"]->query("select * from ex1;")->fetchAll(PDO::FETCH_ASSOC);;?></filter>
+      
+    </dom>
+  </filters></app>

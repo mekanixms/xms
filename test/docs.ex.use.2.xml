@@ -1,0 +1,11 @@
+<app>
+  <use source="test/docs.ex.import.1.xml" xpath="//app/*"/>
+  
+  
+  
+  
+<bookmarks/><filters><dom><filter><xpath>//fieldset[@id="facilitati"]</xpath><?aws $el->appendChild($el->ownerDocument->createTextNode("THIS IS FROM YOUR NEW APP!!!!"));
+
+$p = new Xms\Core\Html($el);
+
+$p($el->getNodePath())->prepend('<font color="red">THIS IS ALSO NEW</font>');?></filter></dom></filters></app>

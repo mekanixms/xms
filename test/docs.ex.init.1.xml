@@ -1,0 +1,9 @@
+<app outputxsl="xsl/aws2html.xsl">
+  
+  <init><return>INIT_DIRECTIVE1</return><?aws return "InitDirective 1 ".rand(); ?></init><client>
+    <header/>
+    <content>
+      <div><?php return $GLOBALS["APPINIT"]["INIT_DIRECTIVE1"];?><br/><?php return $el->topmost()->INIT_DIRECTIVE2." ".rand();?></div>
+    <strong><?php return get_class($el->topmost())." ".Xms\Core\Xms::VERSION;?></strong></content>
+  </client><?aws TEST PI?>
+<bookmarks><bookmark name="MAIN">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;div:eq(0)</bookmark></bookmarks><init><?aws $el->topmost()->INIT_DIRECTIVE2 = "InitDirective 2";?></init></app>

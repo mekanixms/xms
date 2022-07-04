@@ -1,0 +1,17 @@
+<app outputxsl="xsl/aws2html5.xsl">
+  
+  <client>
+    <header/>
+    <content><case><default><div class="parentcase">default<case><default><div class="childcase"> default</div></default><firstcase><div class="childcase"> first</div></firstcase><secondcase><div class="childcase"> second</div></secondcase><firstcase><div class="childcase"> first case duplicate</div></firstcase><filter><?aws $rand = rand(1,3);
+$keys = ["default","firstcase","secondcase"];
+return $keys[$rand];?></filter></case></div></default><firstcase><div class="parentcase">first<case><default><div class="childcase"> default</div></default><firstcase><div class="childcase"> first</div></firstcase><secondcase><div class="childcase"> second</div></secondcase><firstcase><div class="childcase"> first case duplicate</div></firstcase><filter><?aws $rand = rand(1,3);
+$keys = ["default","firstcase","secondcase"];
+return $keys[$rand];?></filter></case></div></firstcase><secondcase><div class="parentcase">second<case><default><div class="childcase"> default</div></default><firstcase><div class="childcase"> first</div></firstcase><secondcase><div class="childcase"> second</div></secondcase><firstcase><div class="childcase"> first case duplicate</div></firstcase><filter><?aws $rand = rand(1,3);
+$keys = ["default","firstcase","secondcase"];
+return $keys[$rand];?></filter></case></div></secondcase><firstcase><div class="parentcase">first case duplicate<case><default><div class="childcase"> default</div></default><firstcase><div class="childcase"> first</div></firstcase><secondcase><div class="childcase"> second</div></secondcase><firstcase><div class="childcase"> first case duplicate</div></firstcase><filter><?aws $rand = rand(1,3);
+$keys = ["default","firstcase","secondcase"];
+return $keys[$rand];?></filter></case></div></firstcase><filter><?aws $rand = rand(1,3);
+$keys = ["default","firstcase","secondcase"];
+return $keys[$rand];?></filter></case><br/><strong><?php return get_class($el->topmost())." ".Xms\Core\Xms::VERSION;?></strong></content>
+  </client>
+<bookmarks><bookmark name="CASE">app:eq(0)&gt;client:eq(0)&gt;content:eq(0)&gt;case:eq(0)</bookmark></bookmarks></app>

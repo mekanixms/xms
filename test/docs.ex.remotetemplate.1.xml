@@ -1,0 +1,10 @@
+<app outputxsl="xsl/aws2xhtml.xsl">
+  <remotetemplate cache="enabled" cachestorage="remoteTemplateCasaLucan" clearcache="0">
+    <filter name="filter_resetNavMenu"><?aws $doc->q("//nav")->replace('<div class="NO_MENU"/>');?></filter>
+  <filter name="filter_resetSidebar"><?aws $doc->q("//*[@class[contains(.,'sidebar1')]]")->replace('<div class="NO_SIDEBAR"/>');?></filter><filter name="filter_setStylesHrefToRemoteLocation"><?aws function changeStylesHref(&$el)
+{
+$el->setAttribute("href","http://www.casa-lucan.ro/".$el->getAttribute("href"));
+}
+
+$doc->q("//link[@rel='stylesheet']")->each("changeStylesHref");?></filter><check><?aws return TRUE;?></check><runfirst><?aws $el->setAttribute("source","http://casa-lucan.ro");?></runfirst></remotetemplate>
+<bookmarks/></app>

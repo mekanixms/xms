@@ -1,0 +1,3 @@
+<app outputxsl="xsl/aws2html5.xsl"><bookmarks/><init><?aws $GLOBALS["BROWSER"] = new Third\Party\Browser();?></init><client><content><case><filter><?aws if($GLOBALS["BROWSER"]->isMobile())
+return "mobile";
+else return "default";?></filter><default>DESKTOP</default><mobile>MOBILE</mobile></case></content></client></app>

@@ -1,0 +1,25 @@
+<app outputxsl="xsl/aws2html.xsl">
+  <bookmarks><bookmark name="HTML Directives">app:eq(0)&gt;client:eq(0)&gt;header:eq(0)</bookmark></bookmarks>
+  <client lang="en">
+  <header>
+    <metas>
+      <element content="text/html; charset=utf-8" http-equiv="content-type"/>
+    </metas>
+    <metas>
+      <element content="Tutorials,Tutorials:AWS XMS" name="keywords"/>
+    </metas>
+    
+    
+    
+    
+    
+    
+    <style href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+    
+    <load src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js" type="text/javascript"/>
+    <load src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js" type="text/javascript"/>
+    <run disabled="">$(document).ready(function(){$("#dialogContainer").dialog();})</run>
+  <?js $(document).ready(function(){$("#dialogContainer").dialog();})?><run>$(document).ready(function(){$("#dialogContainer").append("&lt;br/&gt;SOME CONTENT FROM RUN");})</run></header>
+  <content><div id="dialogContainer">THIS IS A DIALOG<?js console.log("SOME OTHER JS");?></div><?js $(document).ready(function(){$("#dialogContainer").dialog("option","title","title defined in pi#js child of body");})?></content>
+</client>
+</app>

@@ -1,0 +1,1 @@
+<app outputxsl="xsl/aws2html5.xsl"><client><header><load src="js/jquery/jquery-1.10.2.js" type="text/javascript"/><load type="text/javascript" src="test/regex.js"/></header><content><input type="text" id="express" value="a/b|c/[d/e|f/g]"/></content></client></app>
