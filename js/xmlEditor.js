@@ -9,6 +9,7 @@
  * Date: 2010-10-24
  */
 
+//0.4.24 tree rows are inserted directly; kvaTree API lives on the list element
 //0.4.23 small tweaks on splitter
 //0.4.22 duplicateNode tool
 //0.4.22 trash tool visibility when elements are checked
@@ -589,6 +590,7 @@ $.fn.xmlEditor = function (options) {
                         //sterge daca exista
                         obj.checkedStack.removeItem(this);
                 }
+                obj.setCheckedElementsTools();
             },
             onClick: function (e, node) {
 
@@ -613,7 +615,7 @@ $.fn.xmlEditor = function (options) {
             onAfterExpand: function () {
             },
             onAfterCollapse: function (node) {
-                $($("ul", node), obj.nodeList).empty()
+                obj.kva().clearChildren(node);
             },
             onDrag_: function (e, sourceLi) {
             },
@@ -1577,7 +1579,6 @@ $.fn.xmlEditor = function (options) {
                                 obj.reloadTreeBranch(this)
                             }
                         });
-                        obj.tree.kvaTree.InitKvaTree();
                         obj.uncheckAll();
                         $(this).dialog("close");
                     } else
@@ -1670,7 +1671,6 @@ $.fn.xmlEditor = function (options) {
                         active.parentNode.replaceChild(elements[0], active);
                         obj.reloadTreeBranch(this)
                     });
-                    obj.tree.kvaTree.InitKvaTree();
                     obj.uncheckAll();
                     $(this).dialog("close")
                 },
@@ -2020,7 +2020,7 @@ $.fn.xmlEditor = function (options) {
             var al = +" " + activ.childNodes.length + " child nodes of ";
             if (!obj.active().hasClass("open")) {
                 console.time("Extending " + al + "`" + activ.nodeName + (activ.nodeType == 1 ? (activ.hasAttribute("id") ? "#" + activ.getAttribute("id") : "") : "") + "`");
-                obj.tree.get(0).ExpandNode(obj.active());
+                obj.kva().expand(obj.active());
                 console.timeEnd("Extending " + al + "`" + activ.nodeName + (activ.nodeType == 1 ? (activ.hasAttribute("id") ? "#" + activ.getAttribute("id") : "") : "") + "`");
             }
             return false
@@ -2030,7 +2030,7 @@ $.fn.xmlEditor = function (options) {
             evt.preventDefault();
             if (obj.active().hasClass("open")) {
                 console.log("Collapsing " + obj.activeInXmlDoc().get(0).nodeName);
-                obj.tree.get(0).CollapseNode(obj.active());
+                obj.kva().collapse(obj.active());
                 $("#nodeListDiv").scrollTo(obj.active().get(0));
             }
             return false
@@ -2058,7 +2058,7 @@ $.fn.xmlEditor = function (options) {
         jQuery(document).bind("keydown", obj.o.shortcuts.toggleNode.keys, function (evt) {
             evt.stopPropagation();
             evt.preventDefault();
-            obj.tree.get(0).ToggleNode(obj.active());
+            obj.kva().toggle(obj.active());
             return false
         });
         jQuery(document).bind("keydown", obj.o.shortcuts.toggleSelectionActive.keys, function (evt) {
@@ -2107,7 +2107,8 @@ $.fn.xmlEditor = function (options) {
             obj.checkedStack.removeItem(this);
             //$(this).trigger("click");
             //daca fac cu trigger le scoate automat din checkedStack pt ca vine prin kvaTree::onNodeCheckedCallback
-        })
+        });
+        obj.setCheckedElementsTools();
     };
     obj.checked = function () {
         return $(obj.checkedStack)
@@ -2422,13 +2423,12 @@ $.fn.xmlEditor = function (options) {
                 if (confirm("Delete node '" + xmldocEq.nodeName + "' ?")) {
                     console.log("Deleting " + xmldocEq.nodeName);
 
-                    obj.tree.kvaTree.DeleteNode(this);
                     xmldocEq.parentNode.removeChild(xmldocEq);
+                    obj.kva().remove(this);
                 }
             } else {
                 alert("You cannot delete root element")
             }
-            obj.reloadTreeBranch(this);
         });
         obj.uncheckAll();
         return true
@@ -2660,15 +2660,18 @@ $.fn.xmlEditor = function (options) {
             obj.dialog("option", "title", obj.instanceOf + " " + obj.version + "-" + obj.credentials + " / " + obj.releaseDate);
     };
 
+    obj.kva = function () {
+        return obj.tree.get(0).kvaTree;
+    };
     obj.buildTree = function () {
         obj.prepareDataSource(obj.dataSourceContent);
         if ($("ul.domtree", obj.nodeList).length != 0) {
-            $("ul.domtree", obj.nodeList).replaceWith("")
+            $("ul.domtree", obj.nodeList).remove();
         }
-        obj.nodeList.append('<ul class="domtree"><li rootnode="true"><input type="checkbox" style="position:relative; left: -54px; top: -3px;"/><span style="position:relative; left: -20px; top: -4px;">' + obj.root.nodeName + '</span><ul id="' + obj.root.nodeName + '"></ul></li></ul>');
-        $("li[rootnode=true]", obj.nodeList).get(0).documentRef = obj.root;
+        obj.nodeList.append('<ul class="domtree"></ul>');
         obj.tree = $("ul.domtree", obj.nodeList);
         obj.tree.kvaTree(o.treeOptions);
+        obj.kva().mount(obj.root.nodeName, "node", obj.root);
 
         obj.dataSourceInitialized = true;
     };
@@ -2819,7 +2822,7 @@ $.fn.xmlEditor = function (options) {
                                     }
                                     handler(xmlDomEq)
                                 }
-                                obj.tree.kvaTree.InitKvaTree();
+                                obj.reloadTreeBranch(obj.active(), "self");
                                 $(this).dialog("destroy").replaceWith(" ")
                             },
                             Delete: function () {
@@ -2864,7 +2867,7 @@ $.fn.xmlEditor = function (options) {
                             if (create) {
                                 var newCommentElement = obj.createNodeByType(xmlDomEq.ownerDocument, nodeTypeToShow, commentData);
                                 xmlDomEq.appendChild(newCommentElement);
-                                obj.tree.kvaTree.InitKvaTree();
+                                obj.reloadTreeBranch(obj.active(), "self");
                                 handler(xmlDomEq)
                             }
                             $(this).dialog("destroy").replaceWith(" ")
@@ -3033,7 +3036,7 @@ $.fn.xmlEditor = function (options) {
             console.log("Extending active node");
 
             if (!activ.hasClass("open"))
-                obj.tree.get(0).ExpandNode(activ);
+                obj.kva().expand(activ);
         }
     };
     obj.extendCssPath = function (csspath) {
@@ -3041,7 +3044,7 @@ $.fn.xmlEditor = function (options) {
         var split = csspath.split(">");
         $("li", obj.tree).each(function () {
             if (this.documentRef === $(split[0], obj.xmlDoc).get(0)) {
-                obj.tree.get(0).CollapseNode($(this));
+                obj.kva().collapse($(this));
             }
         });
         var collect = "";
@@ -3050,7 +3053,7 @@ $.fn.xmlEditor = function (options) {
             var currentNodeinXMLDoc = $(collect.slice(1), obj.xmlDoc).get(0);
             $("li", obj.tree).each(function () {
                 if (this.documentRef === currentNodeinXMLDoc) {
-                    obj.tree.get(0).ExpandNode($(this));
+                    obj.kva().expand($(this));
                 }
             })
         });
@@ -3064,27 +3067,25 @@ $.fn.xmlEditor = function (options) {
         console.timeEnd("Extending path: " + csspath);
     };
 
-    //TODO: cut delete cope and paste doesnt work because we lose the content while toggle
     obj.reloadTreeBranch = obj.toggleNodeParent = function (thisOne, what) {
+        var li;
+        var xmlNode;
+        var current;
         if (thisOne == null)
             thisOne = obj.active();
-
-        if (what == "self") {
-            if ($(thisOne).children("span").hasClass(".sign"))
-                if (thisOne.children("span.sign.minus").length > 0)
-                    obj.tree.get(0).redrawOpenNode(thisOne);
-                else
-                    //pt leaf
-                    obj.tree.get(0).redrawOpenNode($(thisOne).parents("li.node").first());
-
-            //pt leaf
-            //else
-            //$(thisOne).parents("li:first").children("span.sign.minus").trigger("click").trigger("click");
-        } else {
-            var activeParent = $(thisOne).parents("li:first");
-            if (activeParent.children("span.sign.minus").length > 0)
-                obj.tree.get(0).redrawOpenNode(activeParent);
+        li = $(thisOne);
+        if (!li.length)
+            return;
+        xmlNode = li.get(0).documentRef;
+        if (xmlNode) {
+            current = obj.kva().rowFor(xmlNode);
+            if (current)
+                li = $(current);
         }
+        if (what == "self" && li.hasClass("open"))
+            obj.kva().refresh(li);
+        else
+            obj.kva().refresh(li.parents("li.open").first());
     }
     obj.toggleNodeListDiv = function () {
         var elem = $("div#leftHandControls");
@@ -3534,8 +3535,13 @@ $.fn.xmlEditor = function (options) {
     obj.deleteCallback = function (params) {
         var xmldocEq = obj.activeInXmlDoc().get(0);
         if (xmldocEq != obj.root) {
+            var row = obj.kva().rowFor(xmldocEq);
+            var parentLi = row ? $(row).parents("li.open").first() : $();
             xmldocEq.parentNode.removeChild(xmldocEq);
-            obj.tree.kvaTree.DeleteNode(params.which)
+            if (parentLi.length)
+                obj.kva().refresh(parentLi);
+            else if (row)
+                obj.kva().remove(row);
         } else {
             alert("You cannot delete root element of the document")
         }
@@ -3641,10 +3647,10 @@ $.fn.xmlEditor = function (options) {
                     if (o.treeDisplayFilter(this)) {
                         if (obj.runtimeOptions.showDOMElementsOnly.value) {
                             if (this.nodeType == 1) {
-                                obj.tree.kvaTree.AddNodeTo(name, type, this)
+                                obj.kva().add(name, type, this)
                             }
                         } else {
-                            obj.tree.kvaTree.AddNodeTo(name, type, this)
+                            obj.kva().add(name, type, this)
                         }
                     }
                 })

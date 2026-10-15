@@ -1,384 +1,310 @@
 /**
  * @preserve
  * XMS - Online Web Development
- * 
+ *
  * Copyright (c) 2010 Cezar Lucan cezar.lucan@gmail.com
  * Licensed under GPL license.
  * https://github.com/mekanixms/xms
  *
- * Date: 2010-10-24
- * The original kvaTree plugin doesnt belong to me and seems is no longer maintained;
- * this is a modified version that fits the needs of this project
- * but all credits for this script go to original developer of kvaTree
+ * The original kvaTree plugin is unmaintained. This version keeps the
+ * editor's lazy outline (expand fills a branch, collapse drops it) and
+ * replaces the per-node rebuild, GIF connectors, and shared $.fn methods.
+ *
+ * API is stored on the root element as element.kvaTree:
+ *   mount, add, remove, expand, collapse, toggle, refresh, clearChildren, rowFor
  */
-(function(a) {
-	a.fn.kvaTree = function(b) {
-		return a(this).each(function() {
-			var c = a(this);
-			var e = this;
-			var d = null;
-			e.options = {
-				autoclose : true,
-				autoExpandOnAdd : false,
-				background : "white",
-				imgFolder : "images/",
-				overrideEvents : false,
-				dragdrop : true,
-				dropOk : false,
-				onClick : false,
-				onDblClick : false,
-				onBeforeExpand : false,
-				onAfterExpand : false,
-				onBeforeCollapse : false,
-				onAfterCollapse : false,
-				onAddNode : false,
-				onEditNode : false,
-				onDeleteNode : false,
-				onDrag : false,
-				onDrop : false
-			};
-			e.opts = a.extend({}, e.options, b);
-			//atasez callback pt checkbox (daca exista) pt rootnode
-			$(e).find(":checkbox").on("change", function() {
-				if ( typeof e.opts.onNodeCheckedCallback == "function")
-					e.opts.onNodeCheckedCallback.apply(this.parentNode, [this.checked]);
-				$(e).trigger({
-					"type" : "checked",
-					"status" : this.checked,
-					"target" : this.parentNode
-				});
-			});
+(function ($) {
+	$.fn.kvaTree = function (options) {
+		return this.each(function () {
+			if (this.kvaTree && this.kvaTree.root === this)
+				return;
+			this.kvaTree = createTree(this, options);
+		});
+	};
 
-			a.fn.kvaTree.InitKvaTree = function() {
-				var f = '<li class="separator"></li>';
-				c.find("li:not(.separator)").filter(function() {
-					if (a(this).prev("li.separator").get(0)) {
-						return false
-					} else {
-						return true
-					}
-				}).each(function() {
-					a(this).before(f)
-				});
-				c.find("li > span").not(".sign").not(".clr").addClass("text").attr("unselectable", "on");
-				if ((e.opts.dragdrop) && (!false)) {
-					e.ClearEmptyNodes();
-					e.FillEmptyNodes();
-					c.find("li.separator.artificial").hide()
-				}
-				c.find("li:not(.separator,.node,.leaf)").filter(":has(ul)").addClass("node").end().filter(":not(.node)").addClass("leaf");
-				if (false) {
-					e.IeSetStyles()
-				}
-				e.Clean();
-				e.AddSigns();
-				if (!c.data("kvaTree_binded")) {
-					e.BindEvents()
-				}
-			};
-			e.FillEmptyNodes = function() {
-				c.find("li.node").each(function() {
-					if (!a(this).children("ul").get(0)) {
-						a(this).find("span.text").after('<ul><li class="separator artificial"></li></ul>')
-					} else {
-						if (!a(this).find("> ul > li").get(0)) {
-							a(this).find("> ul").append('<li class="separator artificial"></li>')
-						}
-					}
-				})
-			};
-			e.ClearEmptyNodes = function() {
-				c.find("li.separator.artificial").each(function() {
-					if (a(this).siblings("li").get(0)) {
-						a(this).remove()
-					}
-				})
-			};
-			a.fn.kvaTree.AddNode = function(l) {
-				var g = c.find("span.ui-state-highlight").get(0);
-				if (g) {
-					var p = a(g).parents("li:first");
-					var h = a(g).parents("li.node:first");
-					if ((!h.is(".fixedLevel")) || (l != "node")) {
-						var n = (l == "leaf") ? "" : ' class="node"';
-						var q = '<li class="separator"></li>';
-						var o = "<li" + n + '><span class="text">&nbsp;</span><input type="text" value="New item" /></li>';
-						var j = q + o;
-						var m = false;
-						if (p.is(".leaf")) {
-							p.after(j);
-							var i = p.nextAll("li:not(.separator):first");
-							var f = p.parent();
-							m = true
-						} else {
-							if (p.is(".node")) {
-								var k = p.children("ul").get(0);
-								if (k) {
-									a(k).append(j);
-									var i = a(k).children("li:not(.separator):last")
-								} else {
-									p.append("<ul>" + j + "</ul>");
-									var k = p.children("ul").get(0);
-									var i = a(k).children("li:not(.separator):last")
-								}
-								if (e.opts.autoExpandOnAdd) {
-									e.ExpandNode(p)
-								}
-								var f = p;
-								m = true
-							}
-						}
-						if (m) {
-							a(g).removeClass("ui-state-highlight");
-							f.find("input:text").focus().select().blur(function() {
-								e.SaveInput(a(this))
-							})
-						}
-						a.fn.kvaTree.InitKvaTree();
-						if ( typeof (e.opts.onAddNode) == "function") {
-							e.opts.onAddNode(i)
-						}
-					}
-				}
-			};
-			a.fn.kvaTree.AddNodeTo = function(f, m, n) {
-				var h = false;
-				c.find("li").each(function() {
-					if (this.nodeType == 1) {
-						if ( typeof this.documentRef == "object") {
-							if (n.parentNode === this.documentRef) {
-								h = a(this).children("ul").get(0)
-							}
-						}
-					}
-				});
-				if (h) {
-					var r = a(h).parents("li:first");
-					var i = a(h).parents("li.node:first");
-					if ((!i.is(".fixedLevel")) || (m != "node")) {
-						var q = (m == "leaf") ? "" : ' class="node"';
-						var s = '<li class="separator"></li>';
-						var p = "<li" + q + '><input type="checkbox" style="position:relative; left: -54px; top: -3px; border: 1px solid;"/><span class="text" style="position:relative; left: -20px; top: -4px;">' + f + "</span>";
-						var k = s + p;
-						var df = $(k);
-						var o = false;
+	function createTree(root, options) {
+		var opts = $.extend({
+			autoclose: true,
+			autoExpandOnAdd: false,
+			overrideEvents: false,
+			onClick: false,
+			onDblClick: false,
+			onBeforeExpand: false,
+			onAfterExpand: false,
+			onBeforeCollapse: false,
+			onAfterCollapse: false,
+			onAddNode: false,
+			onDeleteNode: false,
+			onNodeCheckedCallback: false
+		}, options);
+		var byXml = new WeakMap();
 
-						df.find(":checkbox").on("change", function() {
-							if ( typeof e.opts.onNodeCheckedCallback == "function")
-								e.opts.onNodeCheckedCallback.apply(this.parentNode, [this.checked]);
-							$(e).trigger({
-								"type" : "checked",
-								"status" : this.checked,
-								"target" : this.parentNode
-							});
-						});
+		$(root).addClass("kvaTree");
 
-						if (r.is(".leaf")) {
-							r.after(df);
-							var j = r.nextAll("li:not(.separator):first");
-							var g = r.parent();
-							o = true
-						} else {
-							if (r.is(".node")) {
-								var l = r.children("ul").get(0);
-								if (l) {
-									a(l).append(df);
-									var j = a(l).children("li:not(.separator):last")
-								} else {
-									r.append("<ul>" + df + "</ul>");
-									var l = r.children("ul").get(0);
-									var j = a(l).children("li:not(.separator):last")
-								}
-								if (e.opts.autoExpandOnAdd) {
-									e.ExpandNode(r)
-								}
-								var g = r;
-								o = true
-							}
-						}
-						if (o) {
-							a(h).removeClass("ui-state-highlight")
-						}
-						a.fn.kvaTree.InitKvaTree();
-						if ( typeof (e.opts.onAddNode) == "function") {
-							e.opts.onAddNode(j, n)
-						}
-					}
-				}
-			};
-			a.fn.kvaTree.EditNode = function() {
-				var g = c.find("span.ui-state-highlight").get(0);
-				if (g) {
-					var f = a(g).parents("li:first");
-					a(g).replaceWith('<span class="text">&nbsp;</span><input type="text" value="' + a(g).text() + '" />');
-					f.find("input:text").focus().select().blur(function() {
-						e.SaveInput(a(this))
-					});
-					if ( typeof (e.opts.onEditNode) == "function") {
-						e.opts.onEditNode(f)
-					}
-				}
-			};
-			a.fn.kvaTree.DeleteNode = function(i) {
-				var g = false;
-				if (i) {
-					c.find("li").each(function() {
-						if (this.nodeType == 1) {
-							if ( typeof this.documentRef == "object") {
-								if (this.documentRef == i) {
-									//h = a(this).children("ul").get(0)
-									g = this;
-								}
-							}
-						}
-					});
-				} else {
-					g = c.find("span.ui-state-highlight").get(0);
-				}
+		function asElement(value) {
+			if (!value)
+				return null;
+			if (value.jquery)
+				return value.get(0) || null;
+			if (value.nodeType === 1)
+				return value;
+			return null;
+		}
 
-				if (g) {
-					var f = a(g).parents("li:first");
-					var h = f.parents("li.node:first");
-					f.prev("li.separator").remove().end().remove();
-					a.fn.kvaTree.InitKvaTree();
-					if ( typeof (e.opts.onDeleteNode) == "function") {
-						e.opts.onDeleteNode(f, h)
-					}
-				}
-			};
-			e.SaveInput = function(f) {
-				f.prev("span.text").remove();
-				var g = (a.trim(f.get(0).value) != "") ? f.get(0).value : "_____";
-				f.replaceWith('<span class="ui-state-highlight text">' + g + "</span>");
-				a.fn.kvaTree.InitKvaTree()
-			};
-			e.IeSetStyles = function() {
-				c.find("li.node.open").next("li.separator").css("background", "none");
-				c.find("li.node:not(.open) > ul").hide();
-				c.find("li.node.open > ul").css("margin-bottom", "1px")
-			};
-			e.Clean = function() {
-				c.find("li:not(.separator)").each(function() {
-					if (a(this).next("li:not(.artificial)").get(0)) {
-						var g = "url(" + e.opts.imgFolder + "line-vertical.gif) left top repeat-y"
-					} else {
-						var g = e.opts.background
-					}
-					a(this).find("span.clr").remove();
-					var f = a(this).height();
-					var h = (a(this).is(".node")) ? 12 : 8;
-					a(this).append('<span class="clr" style="width: 1px; height: ' + f + "px; position: absolute; left: 0; top: " + h + "px; background: " + g + ';"></span>')
-				})
-			};
-			e.AddSigns = function() {
-				c.find("li.node").each(function() {
-					if (a(this).hasClass("open")) {
-						a(this).find("span.sign").remove().end().append('<span class="sign minus"></span>')
-					} else {
-						a(this).find("span.sign").remove().end().append('<span class="sign plus"></span>')
-					}
-				})
-			};
-			e.BindEvents = function() {
-				c.click(function(h) {
-					var f = a(h.target);
-					if (f.is("span.sign")) {
-						var g = f.parents("li:eq(0)");
-						e.ToggleNode(g)
-					} else {
-						if (f.is("span.text")) {
-							var g = f.parents("li:eq(0)");
-							if ( typeof (e.opts.onClick) == "function") {
-								if (!e.opts.overrideEvents) {
-									c.find(".ui-state-highlight").removeClass("ui-state-highlight");
-									f.addClass("ui-state-highlight")
-								}
-								e.opts.onClick(h, g)
-							} else {
-								c.find(".ui-state-highlight").removeClass("ui-state-highlight");
-								f.addClass("ui-state-highlight")
-							}
-						}
-					}
-				});
-				c.dblclick(function(h) {
-					var f = a(h.target);
-					if (f.is("span.text")) {
-						var g = f.parents("li:eq(0)");
-						if ( typeof (e.opts.onDblClick) == "function") {
-							if ((!e.opts.overrideEvents) && (g.is(".node"))) {
-								e.ToggleNode(g)
-							}
-							e.opts.onDblClick(h, g)
-						} else {
-							if (g.is(".node")) {
-								e.ToggleNode(g)
-							}
-						}
-					}
-				});
-				c.data("kvaTree_binded", 1)
-			};
-			e.ToggleNode = function(f) {
-				if (f.hasClass("open")) {
-					e.CollapseNode(f)
-				} else {
-					e.ExpandNode(f)
-				}
-				e.Clean()
-			};
-			e.redrawOpenNode = function(f) {
-				if (f.hasClass("open")) { {
-						e.CollapseNode(f);
-						e.ExpandNode(f);
-					}
-				} else {
-					//e.ExpandNode(f)
-				}
-				e.Clean()
-			};
-			e.ExpandNode = function(g) {
-				if ( typeof (e.opts.onBeforeExpand) == "function") {
-					e.opts.onBeforeExpand(g)
-				}
-				g.addClass("open");
-				if (e.opts.autoclose) {
-					g.siblings(".open").each(function() {
-						e.CollapseNode(a(this))
-					})
-				}
-				if (false) {
-					c.find("li.node.open").next("li.separator").css("background", "none");
-					g.children("ul").show().css({
-						"margin-bottom" : "1px"
-					})
-				}
-				var f = g.find("span.sign:last");
-				f.removeClass("plus").addClass("minus");
-				if ( typeof (e.opts.onAfterExpand) == "function") {
-					e.opts.onAfterExpand(g)
-				}
-				$("#nodeListDiv").scrollTo(g);
-			};
-			e.CollapseNode = function(g) {
-				if ( typeof (e.opts.onBeforeCollapse) == "function") {
-					e.opts.onBeforeCollapse(g)
-				}
-				g.removeClass("open");
-				if (false) {
-					g.children("ul").hide()
-				}
-				var f = g.find("span.sign:last");
-				f.removeClass("minus").addClass("plus");
-				if ( typeof (e.opts.onAfterCollapse) == "function") {
-					e.opts.onAfterCollapse(g)
-				}
-			};
-			if (a(this).is("ul")) {
-				var c = a(this);
-				c.addClass("kvaTree");
-				a.fn.kvaTree.InitKvaTree()
+		function call(name, arg) {
+			if (typeof opts[name] === "function")
+				opts[name](arg);
+		}
+
+		function unindex(li) {
+			if (li.documentRef)
+				byXml.delete(li.documentRef);
+			var nested = li.querySelectorAll("li");
+			var i;
+			for (i = 0; i < nested.length; i++) {
+				if (nested[i].documentRef)
+					byXml.delete(nested[i].documentRef);
 			}
-		})
+		}
+
+		function createRow(name, type, xmlNode) {
+			var li = document.createElement("li");
+			var checkbox = document.createElement("input");
+			var text = document.createElement("span");
+			li.className = type === "leaf" ? "leaf" : "node";
+			if (li.className === "node") {
+				var sign = document.createElement("span");
+				sign.className = "sign";
+				li.appendChild(sign);
+			}
+			checkbox.type = "checkbox";
+			li.appendChild(checkbox);
+			text.className = "text";
+			text.textContent = name == null ? "" : String(name);
+			li.appendChild(text);
+			if (li.className === "node")
+				li.appendChild(document.createElement("ul"));
+			if (xmlNode) {
+				li.documentRef = xmlNode;
+				byXml.set(xmlNode, li);
+			}
+			return li;
+		}
+
+		function notifyAdd(li, xmlNode) {
+			if (typeof opts.onAddNode === "function")
+				opts.onAddNode($(li), xmlNode);
+		}
+
+		function mount(name, type, xmlNode) {
+			var li = createRow(name, type, xmlNode);
+			li.setAttribute("rootnode", "true");
+			root.appendChild(li);
+			notifyAdd(li, xmlNode);
+			return li;
+		}
+
+		function ensureUl(parentLi) {
+			var $parent = $(parentLi);
+			var ul = $parent.children("ul").get(0);
+			if (ul)
+				return ul;
+			$parent.removeClass("leaf").addClass("node");
+			if (!$parent.children("span.sign").length) {
+				var sign = document.createElement("span");
+				sign.className = "sign";
+				parentLi.insertBefore(sign, parentLi.firstChild);
+			}
+			ul = document.createElement("ul");
+			parentLi.appendChild(ul);
+			return ul;
+		}
+
+		function add(name, type, xmlNode) {
+			var parentLi;
+			if (!xmlNode || !xmlNode.parentNode)
+				return null;
+			parentLi = byXml.get(xmlNode.parentNode);
+			if (!parentLi || !root.contains(parentLi))
+				return null;
+			var li = createRow(name, type, xmlNode);
+			ensureUl(parentLi).appendChild(li);
+			if (opts.autoExpandOnAdd)
+				expand(parentLi);
+			notifyAdd(li, xmlNode);
+			return li;
+		}
+
+		function resolve(target) {
+			var el;
+			var mapped;
+			if (!target) {
+				el = $(root).find("span.ui-state-highlight").closest("li").get(0);
+				return el || null;
+			}
+			el = asElement(target);
+			if (el && el.tagName === "LI" && root.contains(el))
+				return el;
+			if (el && el.documentRef && byXml.has(el.documentRef)) {
+				mapped = byXml.get(el.documentRef);
+				if (mapped && root.contains(mapped))
+					return mapped;
+			}
+			if (target.jquery)
+				target = target.get(0);
+			if (target && byXml.has(target)) {
+				mapped = byXml.get(target);
+				if (mapped && root.contains(mapped))
+					return mapped;
+			}
+			return null;
+		}
+
+		function remove(target) {
+			var li = resolve(target);
+			var parentLi;
+			if (!li)
+				return null;
+			parentLi = $(li).parents("li").get(0) || null;
+			if (typeof opts.onDeleteNode === "function")
+				opts.onDeleteNode($(li), parentLi ? $(parentLi) : $());
+			unindex(li);
+			if (li.parentNode)
+				li.parentNode.removeChild(li);
+			return parentLi;
+		}
+
+		function clearChildren(li) {
+			var el = asElement(li);
+			var ul;
+			var nested;
+			var i;
+			if (!el)
+				return;
+			ul = $(el).children("ul").get(0);
+			if (!ul)
+				return;
+			nested = ul.querySelectorAll("li");
+			for (i = 0; i < nested.length; i++) {
+				if (nested[i].documentRef)
+					byXml.delete(nested[i].documentRef);
+			}
+			while (ul.firstChild)
+				ul.removeChild(ul.firstChild);
+		}
+
+		function expand(li) {
+			var el = asElement(li);
+			var $el;
+			if (!el)
+				return;
+			$el = $(el);
+			if (!$el.hasClass("node") || $el.hasClass("open"))
+				return;
+			call("onBeforeExpand", $el);
+			$el.addClass("open");
+			if (opts.autoclose) {
+				$el.siblings(".open").each(function () {
+					collapse(this);
+				});
+			}
+			call("onAfterExpand", $el);
+		}
+
+		function collapse(li) {
+			var el = asElement(li);
+			var $el;
+			if (!el)
+				return;
+			$el = $(el);
+			if (!$el.hasClass("open"))
+				return;
+			call("onBeforeCollapse", $el);
+			$el.removeClass("open");
+			call("onAfterCollapse", $el);
+		}
+
+		function toggle(li) {
+			var el = asElement(li);
+			if (!el)
+				return;
+			if ($(el).hasClass("open"))
+				collapse(el);
+			else
+				expand(el);
+		}
+
+		function refresh(li) {
+			var el = asElement(li);
+			if (!el || !$(el).hasClass("open"))
+				return;
+			clearChildren(el);
+			call("onBeforeExpand", $(el));
+		}
+
+		function selectText(span) {
+			$(root).find(".ui-state-highlight").removeClass("ui-state-highlight");
+			span.addClass("ui-state-highlight");
+		}
+
+		$(root).on("click", function (event) {
+			var target = $(event.target);
+			var li;
+			if (target.is("span.sign")) {
+				toggle(target.closest("li"));
+				return;
+			}
+			if (!target.is("span.text"))
+				return;
+			li = target.closest("li");
+			if (typeof opts.onClick === "function") {
+				if (!opts.overrideEvents)
+					selectText(target);
+				opts.onClick(event, li);
+			} else {
+				selectText(target);
+			}
+		});
+
+		$(root).on("dblclick", function (event) {
+			var target = $(event.target);
+			var li;
+			if (!target.is("span.text"))
+				return;
+			li = target.closest("li");
+			if (typeof opts.onDblClick === "function") {
+				if (!opts.overrideEvents && li.hasClass("node"))
+					toggle(li);
+				opts.onDblClick(event, li);
+			} else if (li.hasClass("node")) {
+				toggle(li);
+			}
+		});
+
+		$(root).on("change", "input:checkbox", function () {
+			if (typeof opts.onNodeCheckedCallback === "function")
+				opts.onNodeCheckedCallback.apply(this.parentNode, [this.checked]);
+			$(root).trigger({
+				type: "checked",
+				status: this.checked,
+				target: this.parentNode
+			});
+		});
+
+		return {
+			root: root,
+			mount: mount,
+			add: add,
+			remove: remove,
+			expand: expand,
+			collapse: collapse,
+			toggle: toggle,
+			refresh: refresh,
+			clearChildren: clearChildren,
+			rowFor: function (xmlNode) {
+				var li = xmlNode ? byXml.get(xmlNode) : null;
+				return li && root.contains(li) ? li : null;
+			}
+		};
 	}
 })(jQuery);

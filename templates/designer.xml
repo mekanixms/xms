@@ -9,7 +9,7 @@
       <load src="js/jquery/hotkeys/jquery.hotkeys-0.7.9.min.js" type="text/javascript"/>
       
       <load src="js/awsNativeDomXpath.js" type="text/javascript"/>
-      <style href="css/kvaTree.css" rel="stylesheet" type="text/css"/>
+      <style href="css/kvaTree.css?v=20261015" rel="stylesheet" type="text/css"/>
       <load src="js/jquery/kvaTree.js" type="text/javascript"/>
       <load src="js/xmlEditor.js" type="text/javascript"/>
       <load src="js/jsUtils.js" type="text/javascript"/>
