@@ -118,3 +118,40 @@ define('AWS_DEBUG_FILENAME', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_S
 define('AWS_DEBUGGING_ERRORS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsErrors.log");
 define('AWS_DEBUGGING_EXCEPTIONS_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsExceptions.log");
 define('AWS_DEBUGGING_SHUTDOWN_HANDLER', __DIR__ . DIRECTORY_SEPARATOR . "log" . DIRECTORY_SEPARATOR . ".xmsShutdown.log");
+
+/* 
+ * PHP 8 create_function replacement.
+ * CREDITS https://www.php.net/manual/en/function.create-function.php#109197
+ */
+if ( ! function_exists( "create_function" ) ) { 
+	function create_function( $arg, $body ) { 
+		static $cache = array(); 
+		static $max_cache_size = 64;
+		static $sorter;
+		
+		if ( $sorter === NULL ) {
+			$sorter = function( $a, $b ) {
+				if ( $a->hits == $b->hits ) {
+					return 0;
+				}
+		
+				return ($a->hits < $b->hits) ? 1 : -1;
+			};
+		}
+		
+		$crc = crc32($arg . "\\x00" . $body);
+		
+		if (isset($cache[$crc])) {
+			++$cache[$crc][1];
+			return $cache[$crc][0];
+		}
+		
+		if ( sizeof($cache) >= $max_cache_size ) {
+			uasort($cache, $sorter);
+			array_pop($cache);
+		}
+		
+		$cache[$crc] = array( $cb = eval('return function('.$arg.'){'.$body.'};'), 0 );
+		return $cb; 
+	} 
+}

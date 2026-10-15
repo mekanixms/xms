@@ -1,4 +1,6 @@
-<?php namespace Xms\Core;
+<?php
+
+namespace Xms\Core;
 
 use ErrorException;
 use DOMNode;
@@ -54,6 +56,7 @@ use Closure;
 /*
  * Abstract class providing extended xml functionality
  */
+
 abstract class CommonXml extends XmsOverload
 {
 
@@ -77,18 +80,18 @@ abstract class CommonXml extends XmsOverload
     final public function q($query = ".", $context = FALSE)
     {
         $this->lastQuery = $query;
+        $node = $context ? $context : $this->context;
+        list($found, $errors) = $this->readXPath("query", $query, $node);
 
-        if (!$context)
-            $this->results = $this->normalizeOperationsInput($this->xpath->query($query, $this->context));
-        else
-            $this->results = $this->normalizeOperationsInput($this->xpath->query($query, $context));
-
-        $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " executing xpath query\t" . $query . "\n\t" . sizeof($this->results) . " results \n";
-
-        if ($this->results === FALSE) {
+        if ($found === FALSE) {
             $this->results = array();
-            throw new ErrorException("\n Expression is malformed or the contextnode is invalid in " . __FUNCTION__ . " of " . get_class($this) . "\n");
+            throw new ErrorException("\n Expression is malformed or the contextnode is invalid in " . __FUNCTION__ . " of " . get_class($this) . $this->xpathErrorText($errors) . "\n");
         }
+
+        $this->results = $this->normalizeOperationsInput($found);
+
+        // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " executing xpath query\t" . $query . "\n\t" . sizeof($this->results) . " results \n";
+
         return $this;
     }
 
@@ -102,17 +105,21 @@ abstract class CommonXml extends XmsOverload
     final public function e($query = ".", $context = FALSE)
     {
         $this->lastQuery = $query;
-        if (!$context)
-            $this->results = $this->normalizeOperationsInput($this->xpath->evaluate($query, $this->context));
-        else
-            $this->results = $this->normalizeOperationsInput($this->xpath->evaluate($query, $context));
+        $node = $context ? $context : $this->context;
+        list($found, $errors) = $this->readXPath("evaluate", $query, $node);
 
-        $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " executing xpath query\t" . $query . "\n\t" . sizeof($this->results) . " results \n";
-
-        if ($this->results === FALSE) {
+        if ($errors) {
             $this->results = array();
-            throw new ErrorException("\n Expression is malformed or the contextnode is invalid in " . __FUNCTION__ . " of " . get_class($this) . "\n");
+            throw new ErrorException("\n Expression is malformed or the contextnode is invalid in " . __FUNCTION__ . " of " . get_class($this) . $this->xpathErrorText($errors) . "\n");
         }
+
+        if ($found instanceof DOMNodeList || $found instanceof DOMNode)
+            $this->results = $this->normalizeOperationsInput($found);
+        else
+            $this->results = array($found);
+
+        $this->logConsole(get_class($this) . "::" . __FUNCTION__ . " executing xpath query\t" . $query . "\n\t" . sizeof($this->results) . " results \n");
+
         return $this;
     }
 
@@ -127,7 +134,7 @@ abstract class CommonXml extends XmsOverload
         return call_user_func_array(array(
             $this,
             "q"
-            ), func_get_args());
+        ), func_get_args());
     }
 
     function __clone()
@@ -143,7 +150,7 @@ abstract class CommonXml extends XmsOverload
      * @param	DOMNode $context
      * @return	CommonXml
      */
-    final public function setContext(&$context)
+    final public function setContext($context)
     {
         $this->context = $context;
         return $this;
@@ -177,7 +184,7 @@ abstract class CommonXml extends XmsOverload
                     foreach ($this->results as $result) {
                         //& de mai jos e important altfel avem warning;
                         $params[0] = &$result;
-                        $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " executing callback " . ($params[0] instanceof DOMNode ? "on " . $params[0]->nodeName : "") . "\n";
+                        // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " executing callback " . ($params[0] instanceof DOMNode ? "on " . $params[0]->nodeName : "") . "\n";
                         //daca este closure
                         if (Utils::is_closure($callback)) {
                             //if($callback instanceof Closure)
@@ -185,21 +192,21 @@ abstract class CommonXml extends XmsOverload
                             if (gettype($params[0]) == "object" && $params[0] instanceof DOMNode) {
                                 //apeleaza funtia cu $this = $el
                                 $callback = $callback->bindTo($params[0]);
-                                $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " binding callback to " . $params[0]->nodeName . "\n";
+                                // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " binding callback to " . $params[0]->nodeName . "\n";
                             }
                         } else {
-                            $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " NOT a closure\n";
+                            // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " NOT a closure\n";
                         }
 
                         $fres = call_user_func_array($callback, $params);
-                        if ($fres === FALSE)
-                            $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " was NOT ABLE TO EXECUTE given callback\n";
+                        // if ($fres === FALSE)
+                            // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " was NOT ABLE TO EXECUTE given callback\n";
                     }
             } else {
-                $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " ERROR executing callback: NONE CALLABLE\n";
+                // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " ERROR executing callback: NONE CALLABLE\n";
             }
         } else {
-            $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " NO callback supplied\n";
+            // $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " NO callback supplied\n";
         }
         return $this;
     }
@@ -222,14 +229,15 @@ abstract class CommonXml extends XmsOverload
             $checkForResults = call_user_func_array($callback, $params);
 
             if ($checkForResults === FALSE)
-                $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " callback could not be executed\n";
+                $this->logConsole(get_class($this) . "::" . __FUNCTION__ . " callback could not be executed\n");
         }
         return $this;
     }
 
     /**
-     * executes $toCheck callback before executing code in below methods; $toCheck needs to return TRUE for method to execute
-     * used in methods like append, perpend, before, after, text, attr, removeAttr, replace, replaceContent, text, removeChilds
+     * Stores a callback that text() consults before writing.
+     * The callback receives the node and must return TRUE for that node to change.
+     * append, prepend, before, after and replace stopped consulting it in 0.47.
      *
      * @param	callback $toCheck
      * @return	CommonXml
@@ -268,9 +276,8 @@ abstract class CommonXml extends XmsOverload
                     $checkForResults = call_user_func_array($callback, $params);
                     if ($checkForResults === TRUE)
                         $theyDo[] = $result;
-                    else {
-                        $this->topmost()->XMS_SERVER_CONSOLE = get_class($this) . "::" . __FUNCTION__ . " either the callback could not be executed or the element did not passed the test\n";
-                    }
+                    else
+                        $this->logConsole(get_class($this) . "::" . __FUNCTION__ . " either the callback could not be executed or the element did not passed the test\n");
                 }
             }
             $this->results = $theyDo;
@@ -301,7 +308,7 @@ abstract class CommonXml extends XmsOverload
                     $checkForResults = $this->xpath->query($selector, $result);
                     //find nodes given by $selector in context $result
                     if ($checkForResults === FALSE)
-                    //if query returns FALSE
+                        //if query returns FALSE
                         throw new ErrorException("\n Expression is malformed or invalid context " . __FUNCTION__ . " of " . get_class($this) . "\n");
                     else if ($checkForResults instanceof DOMNodeList && $checkForResults->length > 0) {
                         //if we have nodes in context
@@ -381,11 +388,8 @@ abstract class CommonXml extends XmsOverload
 
             call_user_func_array($callback, $params);
             return $this;
-        }
-        else {
-            if ($this->results[$index] instanceof DOMNode)
-                return $this->results[$index];
-        }
+        } else if (array_key_exists($index, $this->results))
+            return $this->results[$index];
     }
 
     /**
@@ -408,7 +412,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -434,7 +438,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -460,7 +464,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -486,7 +490,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -512,7 +516,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -538,7 +542,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -564,7 +568,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -590,7 +594,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -616,7 +620,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -642,7 +646,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -668,7 +672,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -694,7 +698,7 @@ abstract class CommonXml extends XmsOverload
             call_user_func_array(array(
                 $this,
                 "find"
-                ), $params);
+            ), $params);
         }
 
         return $this;
@@ -777,7 +781,7 @@ abstract class CommonXml extends XmsOverload
     {
 
         if (!$this->removeClass_helper instanceof Closure)
-            $this->removeClass_helper = function(&$el, $class, $g) {
+            $this->removeClass_helper = function (&$el, $class, $g) {
                 $cs = array();
                 if ($this instanceof DOMNode && method_exists($this, "hasAttribute"))
                     if ($this->hasAttribute("class")) {
@@ -806,7 +810,7 @@ abstract class CommonXml extends XmsOverload
     final public function addClass($c, $glue = " ")
     {
         if (!$this->addClass_helper instanceof Closure)
-            $this->addClass_helper = function(&$el, $class, $g) {
+            $this->addClass_helper = function (&$el, $class, $g) {
                 if ($this instanceof DOMNode && method_exists($this, "hasAttribute")) {
                     if ($this->getAttribute("class"))
                         $attrVals = preg_split("/[\s,]+/", $this->getAttribute("class"));
@@ -842,7 +846,7 @@ abstract class CommonXml extends XmsOverload
         $attrValue = func_get_arg(1);
 
         if (!$this->attr_helper instanceof Closure)
-            $this->attr_helper = function(&$el, $attrName, $attrValue) {
+            $this->attr_helper = function (&$el, $attrName, $attrValue) {
                 if ($el->nodeType == 1)
                     $el->setAttribute($attrName, $attrValue);
             };
@@ -867,12 +871,11 @@ abstract class CommonXml extends XmsOverload
     {
         if (func_num_args() >= 1) {
 
-            if (!$removeAttr_helper instanceof Closure)
-                $removeAttr_helper = function(&$el, $attrName) {
-                    if ($el->nodeType == 1)
-                        if ($el->hasAttribute($attrName))
-                            $el->removeAttribute($attrName);
-                };
+            $removeAttr_helper = function (&$el, $attrName) {
+                if ($el->nodeType == 1)
+                    if ($el->hasAttribute($attrName))
+                        $el->removeAttribute($attrName);
+            };
 
             $this->each($removeAttr_helper, $aN);
         }
@@ -887,7 +890,7 @@ abstract class CommonXml extends XmsOverload
     final public function removeAttributes()
     {
         if (!$this->removeAttributes_helper instanceof Closure)
-            $this->removeAttributes_helper = function(&$el) {
+            $this->removeAttributes_helper = function (&$el) {
                 if ($el->nodeType == 1)
                     while ($el->hasAttributes())
                         $el->removeAttributeNode($el->attributes->item(0));
@@ -908,14 +911,14 @@ abstract class CommonXml extends XmsOverload
     {
         $output = array();
         $doc = $this->doc;
-        if (sizeof(func_num_args()) > 0) {
+        if (func_num_args() > 0) {
             //folosesc DOMDocument daca a fost dat ca parametru al functiei
-            if (sizeof(func_num_args()) > 1)
+            if (func_num_args() > 1)
                 if (!func_get_arg(1) instanceof DOMDocument)
                     $doc = func_get_arg(1);
 
             switch (gettype($input)) {
-                case "string" :
+                case "string":
                     //daca input ="" este tot string
                     if (!empty($input)) {
                         $df = $doc->createDocumentFragment();
@@ -923,7 +926,7 @@ abstract class CommonXml extends XmsOverload
                         $output[] = $df;
                     }
                     break;
-                case "object" :
+                case "object":
                     //DOMNodeList DOMNode
                     if ($input instanceof DOMNode) {
                         $output[] = $input;
@@ -932,7 +935,7 @@ abstract class CommonXml extends XmsOverload
                             $output[] = $node;
                     }
                     break;
-                case "array" :
+                case "array":
                     foreach ($input as $v)
                         $output = array_merge($output, $this->normalizeOperationsInput($v));
                     break;
@@ -965,7 +968,7 @@ abstract class CommonXml extends XmsOverload
         if (func_num_args() >= 1) {
             $nodes = $this->normalizeOperationsInput($with);
 
-            $append_helper = function(&$el, $df, $cloneNode) {
+            $append_helper = function (&$el, $df, $cloneNode) {
                 if ($cloneNode) {
                     if (method_exists($df, "cloneNode"))
                         $newdf = $df->cloneNode(TRUE);
@@ -999,8 +1002,7 @@ abstract class CommonXml extends XmsOverload
         if (func_num_args() >= 1) {
             $nodes = $this->normalizeOperationsInput($with);
 
-            if (!$prepend_helper instanceof Closure)
-                $prepend_helper = function(&$el, $df, $cloneNode) {
+            $prepend_helper = function (&$el, $df, $cloneNode) {
                     if ($cloneNode) {
                         if (method_exists($df, "cloneNode"))
                             $newdf = $df->cloneNode(TRUE);
@@ -1038,8 +1040,7 @@ abstract class CommonXml extends XmsOverload
     {
         if (func_num_args() >= 1) {
             $nodes = $this->normalizeOperationsInput($with);
-            if (!$before_helper instanceof Closure)
-                $before_helper = function(&$el, $df, $cloneNode) {
+            $before_helper = function (&$el, $df, $cloneNode) {
                     if ($cloneNode) {
                         if (method_exists($df, "cloneNode"))
                             $newdf = $df->cloneNode(TRUE);
@@ -1073,8 +1074,7 @@ abstract class CommonXml extends XmsOverload
         if (func_num_args() >= 1) {
             $nodes = $this->normalizeOperationsInput($with);
 
-            if (!$after_helper instanceof Closure)
-                $after_helper = function(&$el, $df, $cloneNode) {
+            $after_helper = function (&$el, $df, $cloneNode) {
                     if ($cloneNode) {
                         if (method_exists($df, "cloneNode"))
                             $newdf = $df->cloneNode(TRUE);
@@ -1112,14 +1112,14 @@ abstract class CommonXml extends XmsOverload
 
             //creez document fragment din arg(0); fac clona si import daca e nevoie
             if (sizeof($this->results) > 1)
-            //daca sunt mai multe elemente in results facem clone
+                //daca sunt mai multe elemente in results facem clone
                 foreach ($nodes as $node)
                     if ($node->ownerDocument === $this->doc)
                         $df->appendChild($node->cloneNode(TRUE));
                     else
                         $df->appendChild($this->doc->importNode($node->cloneNode(TRUE), TRUE));
             else
-            //avem doar un singur resultat al query
+                //avem doar un singur resultat al query
                 foreach ($nodes as $node)
                     if ($node->ownerDocument === $this->doc)
                         $df->appendChild($node);
@@ -1148,14 +1148,13 @@ abstract class CommonXml extends XmsOverload
 
         if (func_num_args() >= 1) {
             $nodes = $this->normalizeOperationsInput($with);
-            if (!$replaceContent_helper_removeContent instanceof Closure)
-                $replaceContent_helper_removeContent = function(&$el) {
-                    while ($el->hasChildNodes())
-                        $el->removeChild($el->firstChild);
-                    foreach ($nodes as $node)
-                        $el->appendChild($node->cloneNode(TRUE));
-                };
-            $this->each($replaceContent_helper_removeContent);
+            $replaceContent = function (&$el) use ($nodes) {
+                while ($el->hasChildNodes())
+                    $el->removeChild($el->firstChild);
+                foreach ($nodes as $node)
+                    $el->appendChild($node->cloneNode(TRUE));
+            };
+            $this->each($replaceContent);
         }
         return $this;
     }
@@ -1182,7 +1181,7 @@ abstract class CommonXml extends XmsOverload
      */
     final public function remove()
     {
-        $this->each(function() {
+        $this->each(function () {
             $this->parentNode->removeChild($this);
         });
         return $this;
@@ -1201,7 +1200,7 @@ abstract class CommonXml extends XmsOverload
             $textContent = func_get_arg(0);
 
             if (!$this->text_helper instanceof Closure)
-                $this->text_helper = function(&$el, $check, $textContent) {
+                $this->text_helper = function (&$el, $check, $textContent) {
                     if (!$check || ($check && is_callable($check) && call_user_func($check, $el))) {
                         $done = false;
                         if ($el->nodeType == XML_ELEMENT_NODE) {
@@ -1218,7 +1217,7 @@ abstract class CommonXml extends XmsOverload
                     }
                 };
 
-            if (function_exists($this->check))
+            if (is_callable($this->check))
                 $this->each($this->text_helper, $this->check, $textContent);
             else
                 $this->each($this->text_helper, FALSE, $textContent);
@@ -1298,18 +1297,18 @@ abstract class CommonXml extends XmsOverload
                         call_user_func_array(array(
                             $result,
                             $method
-                            ), $args);
+                        ), $args);
                     else {
                         trigger_error(get_class($result) . "::$method doesn't exists; trying if any callable property is available", E_USER_WARNING);
                         if (is_callable(array(
-                                $result,
-                                $method
-                            ))) {
+                            $result,
+                            $method
+                        ))) {
                             trigger_error(get_class($result) . "::$method callable property found, executing", E_USER_NOTICE);
                             call_user_func_array(array(
                                 $result,
                                 $method
-                                ), $args);
+                            ), $args);
                         } else
                             trigger_error(get_class($result) . "::$method callable property not found either", E_USER_WARNING);
                     }
@@ -1377,5 +1376,48 @@ abstract class CommonXml extends XmsOverload
             __CLASS__ => self::version,
             get_parent_class($this) => parent::version
         );
+    }
+
+    /**
+     * Runs an XPath query or evaluation with libxml errors captured.
+     *
+     * @param	string $method query or evaluate
+     * @param	string $query
+     * @param	DOMNode $context
+     * @return	array
+     */
+    private function readXPath($method, $query, $context)
+    {
+        $previous = libxml_use_internal_errors(true);
+        libxml_clear_errors();
+        $found = $this->xpath->{$method}($query, $context);
+        $errors = libxml_get_errors();
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        return array($found, $errors);
+    }
+
+    private function xpathErrorText($errors)
+    {
+        if (!$errors)
+            return "";
+        $message = trim($errors[0]->message);
+        return $message === "" ? "" : ": " . $message;
+    }
+
+    /**
+     * Writes a debug line when this object is attached to an event handler.
+     * Xml has no topmost(), and assigning through that missing call is a fatal error on PHP 8.
+     *
+     * @param	string $message
+     * @return	void
+     */
+    private function logConsole($message)
+    {
+        if (!method_exists($this, "topmost"))
+            return;
+        $top = $this->topmost();
+        if (is_object($top))
+            $top->XMS_SERVER_CONSOLE = $message;
     }
 }

@@ -3,3 +3,4 @@ mockup
 cache/*
 composer.lock
 vendor/*
+log/*

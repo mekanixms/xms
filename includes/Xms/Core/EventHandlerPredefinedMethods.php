@@ -1,4 +1,6 @@
-<?php namespace Xms\Core;
+<?php
+
+namespace Xms\Core;
 
 use DOMNode;
 
@@ -113,8 +115,8 @@ trait EventHandlerPredefinedMethods
         $HANDLERS = $this->_XMS_DATA_["EVENTS_STACK"][$action];
         //get an array of event handlers
 
-        if (sizeof($HANDLERS) == 0)
-        //if we dont have any handler defined we still have to send propagate
+        if ($HANDLERS != null && sizeof($HANDLERS) == 0)
+            //if we dont have any handler defined we still have to send propagate
             $HANDLERS[] = new XmsDomEvent($action, $this);
         //so we create one event without callback
 
@@ -148,7 +150,7 @@ trait EventHandlerPredefinedMethods
     {
         //below $action is event type
         switch (func_num_args()) {
-            case 2 :
+            case 2:
                 $action = func_get_arg(0);
                 $callback = func_get_arg(1);
                 //on(event,$callback)
@@ -164,15 +166,15 @@ trait EventHandlerPredefinedMethods
                 } else
                     return FALSE;
                 break;
-            case 3 :
+            case 3:
                 $chain = strtoupper(trim(func_get_arg(0)));
                 $action = func_get_arg(1);
                 $callback = func_get_arg(2);
                 //on(before,event,callback)
                 //on(after,event,callback)
                 switch ($chain) {
-                    case "BEFORE" :
-                    case "AFTER" :
+                    case "BEFORE":
+                    case "AFTER":
                         if (is_callable($callback))
                             $this->_XMS_DATA_["EVENT_CALLBACK_ON"][$chain][$action][] = $callback;
                         break;
@@ -186,7 +188,6 @@ trait EventHandlerPredefinedMethods
      */
     final public function touch()
     {
-        
     }
 
     /**

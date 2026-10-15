@@ -37,7 +37,7 @@ class XmsXml extends Xml implements XmsEventHandler
      * @param  string $encoding - optional - default charset
      * @return XmsXml
      */
-    public function __construct(&$context = null, $encoding = 'UTF-8')
+    public function __construct($context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;
@@ -48,7 +48,7 @@ class XmsXml extends Xml implements XmsEventHandler
         $this->doc->registerNodeClass('DOMElement', 'Xms\Core\XmsDomElement');
         $this->doc->encoding = $this->encoding;
 
-        if (func_num_args() == 1) {
+        if ($context !== null) {
             if (gettype($context) == "string") {
 
                 if (!$this->doc->loadXML($context))
@@ -69,9 +69,10 @@ class XmsXml extends Xml implements XmsEventHandler
                     $this->context = &$this->doc;
                 }
             }
-        } else {
-            $this->context = &$this->doc;
         }
+
+        if (!isset($this->context))
+            $this->context = &$this->doc;
 
         $this->xpath = new DOMXPath($this->doc);
         $this->doc->_parentNode = $this;

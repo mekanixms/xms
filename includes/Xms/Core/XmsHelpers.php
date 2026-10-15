@@ -1,4 +1,6 @@
-<?php namespace Xms\Core;
+<?php
+
+namespace Xms\Core;
 
 use DOMNode;
 use DOMDocumentFragment;
@@ -31,7 +33,7 @@ trait XmsHelpers
             foreach ($el->childNodes as $cn)
                 if ($cn->nodeType == 1)
                     switch ($cn->localName) {
-                        case "runfirst" :
+                        case "runfirst":
                             if ($cn->hasChildNodes())
                                 foreach ($cn->childNodes as $child)
                                     if ($child->nodeType == 7)
@@ -70,7 +72,7 @@ trait XmsHelpers
                 foreach ($el->childNodes as $cn)
                     if ($cn->nodeType == 1)
                         switch ($cn->localName) {
-                            case "filter" :
+                            case "filter":
                                 if ($cn->hasChildNodes())
                                     foreach ($cn->childNodes as $child)
                                         if ($child->nodeType == 7)
@@ -78,7 +80,7 @@ trait XmsHelpers
                                 $toRun = Xms::_create_function($cn, '$doc,$el', $functionText);
                                 $toRun($documentFrom, $el);
                                 break;
-                            case "check" :
+                            case "check":
                                 if ($cn->hasChildNodes())
                                     foreach ($cn->childNodes as $child)
                                         if ($child->nodeType == 7)
@@ -89,7 +91,7 @@ trait XmsHelpers
 
                                 $hasCheck = true;
                                 break;
-                            case "finally" :
+                            case "finally":
                                 if ($cn->hasChildNodes())
                                     foreach ($cn->childNodes as $child)
                                         if ($child->nodeType == 7)
@@ -167,7 +169,7 @@ trait XmsHelpers
                 foreach ($el->childNodes as $cn)
                     if ($cn->nodeType == 1)
                         switch ($cn->localName) {
-                            case "check" :
+                            case "check":
                                 if ($cn->hasChildNodes())
                                     foreach ($cn->childNodes as $child)
                                         if ($child->nodeType == 7)
@@ -240,7 +242,7 @@ trait XmsHelpers
                     $functionText = $child->data;
                 else if ($child->nodeType == 1)
                     switch (strtolower($child->localName)) {
-                        case "return" :
+                        case "return":
                             $toReturnVarName = $child->textContent;
                             break;
                     }
@@ -281,7 +283,7 @@ trait XmsHelpers
 
         foreach ($this->CLIENT->results as $result)
             switch (strtolower($el->localName)) {
-                case "import" :
+                case "import":
                     $d = new Directive($el, $result);
                     $d();
                     if ($d->result instanceof DOMDocumentFragment)
@@ -291,7 +293,7 @@ trait XmsHelpers
                     break;
             }
     }
-    
+
     function processXpath(&$el)
     {
         $functionText = "";
@@ -392,7 +394,7 @@ trait XmsHelpers
                     $unitQ = new Html($unitClone);
 
                     foreach ($pattern as $k => $v) {
-                        $unitQ->q("descendant-or-self::*[@reference='" . $k . "']")->each(function(&$el, $key, $DFvalue) {
+                        $unitQ->q("descendant-or-self::*[@reference='" . $k . "']")->each(function (&$el, $key, $DFvalue) {
                             $value = $el->ownerDocument->createDocumentFragment();
                             $value->appendXML($DFvalue);
                             if ($el->hasAttribute("skip")) {
@@ -406,17 +408,17 @@ trait XmsHelpers
                                             $el->appendChild($value);
                                     };
                                 }
-//varianta alternativa cod de mai sus; nu folosesc pt ca nu merge in 7.0 - desi la export unit cu C14N, modtype apare la interogare valoare cu getAttribute nu returneaza valoarea reala - probabil bug
-//                                if ($el->hasAttribute("modetype")) {
-//                                    if (strtolower($el->getAttribute("modetype")) == "append") {
-//                                        $el->appendChild($value);
-//                                    } else if (strtolower($el->getAttribute("modetype")) == "prepend") {
-//                                        if ($el->hasChildNodes())
-//                                            $el->insertBefore($value, $el->firstChild);
-//                                        else
-//                                            $el->appendChild($value);
-//                                    }
-//                                }
+                                //varianta alternativa cod de mai sus; nu folosesc pt ca nu merge in 7.0 - desi la export unit cu C14N, modtype apare la interogare valoare cu getAttribute nu returneaza valoarea reala - probabil bug
+                                //                                if ($el->hasAttribute("modetype")) {
+                                //                                    if (strtolower($el->getAttribute("modetype")) == "append") {
+                                //                                        $el->appendChild($value);
+                                //                                    } else if (strtolower($el->getAttribute("modetype")) == "prepend") {
+                                //                                        if ($el->hasChildNodes())
+                                //                                            $el->insertBefore($value, $el->firstChild);
+                                //                                        else
+                                //                                            $el->appendChild($value);
+                                //                                    }
+                                //                                }
                             } else {
                                 while ($el->hasChildNodes())
                                     $el->removeChild($el->firstChild);
@@ -424,7 +426,7 @@ trait XmsHelpers
                             }
                         }, $k, $v);
 
-                        if (function_exists($foreachreferenceFunction))
+                        if (is_callable($foreachreferenceFunction))
                             $unitQ->each($foreachreferenceFunction, $k, $v, $pattern);
                     }
 
@@ -439,7 +441,8 @@ trait XmsHelpers
                                             $unitQ->q('descendant-or-self::*[@reference="' . $k . '"]')->each($namedReferenceFunction, $k, $v, $pattern);
                                         }
                     }
-                } else if ($noRecords instanceof DOMNode)
+                }
+            else if ($noRecords instanceof DOMNode)
                 $unit[0]->parentNode->insertBefore($noRecords, $unit[0]);
 
             $q4u->q('descendant::*[@clone="TRUE"]')->removeAttr("clone");
@@ -473,24 +476,24 @@ trait XmsHelpers
         foreach ($el->childNodes as $child)
             if ($child->nodeType == 1)
                 switch (strtolower($child->localName)) {
-                    case "alias" :
+                    case "alias":
                         foreach ($child->childNodes as $textNode)
                             if ($textNode->nodeType == 3)
                                 $tmpFilter[strtolower($child->localName)] = $textNode->textContent;
                         break;
-                    case "check" :
+                    case "check":
                         foreach ($child->childNodes as $textNode)
                             if ($textNode->nodeType == 7) {
                                 $tmpFilter[strtolower($child->localName)] = Xms::_create_function($child, '', $textNode->data);
                                 $tmpFilter["checkData"] = $textNode->data;
                             }
                         break;
-                    case "xpath" :
+                    case "xpath":
                         foreach ($child->childNodes as $textNode)
                             if ($textNode->nodeType == 3)
                                 $tmpFilter[strtolower($child->localName)] = $textNode->textContent;
                         break;
-                    case "callback" :
+                    case "callback":
                         foreach ($child->childNodes as $textNode)
                             if ($textNode->nodeType == 7) {
                                 $tmpFilter[strtolower($child->localName)] = Xms::_create_function($child, '&$el', $textNode->data);

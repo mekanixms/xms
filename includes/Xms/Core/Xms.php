@@ -247,10 +247,10 @@ class Xms implements XmsEventHandler
         $toRet = create_function($args, $ft);
 
 
-        if ($e instanceof XmsEventHandler)
-            $e->topmost()->XMS_SERVER_CONSOLE = __METHOD__ . " $toRet from " . $e->getNodePath() . " ;\n With code:\n" . $ft . "\n\n";
-        else
-            $GLOBALS["XMS_SERVER_CONSOLE"] .= __METHOD__ . " $toRet\nWith code:\n" . $ft . "\n\n";
+        // if ($e instanceof XmsEventHandler)
+        //     $e->topmost()->XMS_SERVER_CONSOLE = __METHOD__ . " $toRet from " . $e->getNodePath() . " ;\n With code:\n" . $ft . "\n\n";
+        // else
+        //     $GLOBALS["XMS_SERVER_CONSOLE"] .= __METHOD__ . " $toRet\nWith code:\n" . $ft . "\n\n";
 
         if (is_callable($toRet))
             return $toRet;
@@ -393,7 +393,7 @@ class Xms implements XmsEventHandler
         foreach ($this->PARSERS as $parser) {
             $check = TRUE;
 
-            if (function_exists($parser["check"]))
+            if (is_callable($parser["check"]))
                 $check = call_user_func($parser["check"]);
 
             if ($check)

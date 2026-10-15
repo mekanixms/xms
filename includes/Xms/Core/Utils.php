@@ -216,6 +216,7 @@ abstract class Utils
     {
         $explodedSeq = explode("/", $sequence);
         $elementName = trim(array_shift($explodedSeq));
+        $found = null;
 
         if ($el->hasChildNodes())
             foreach ($el->childNodes as $child) {
@@ -583,7 +584,7 @@ abstract class Utils
 
     static function xmsLogRotate($fileName, $message)
     {
-        $maxSize = func_get_arg(2);
+        $maxSize = func_get_arg(1);
         
         if (!$maxSize)
             $maxSize = constant("AWS_LOG_ROTATE_MAX_FILESIZE");

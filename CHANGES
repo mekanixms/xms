@@ -1,3 +1,8 @@
+5.1
+    fixes for php 8
+        issues with $this->topmost()->XMS_SERVER_CONSOLE
+            CommonXml::each
+                error: PHP Fatal error:  Uncaught Error: Attempt to assign property "XMS_SERVER_CONSOLE" on null in /srv/http/xms/includes/Xms/Core/CommonXml.php:86\nStack trace:\n#0 /srv/http/xms/includes/Xms/Core/XmsHelpers.php(380): Xms\\Core\\CommonXml->q()\n#1 [internal function]: Xms\\Core\\Xms->processDomIterator()\n#2 /srv/http/xms/includes/Xms/Core/CommonXml.php(194): call_user_func_array()\n#3 /srv/http/xms/includes/Xms/Core/Xms.php(362): Xms\\Core\\CommonXml->each()\n#4 /srv/http/xms/includes/Xms/Core/Xms.php(343): Xms\\Core\\Xms->runStep()\n#5 /srv/http/xms/includes/Xms/Core/Xms.php(232): Xms\\Core\\Xms->runBuiltInDirectives()\n#6 /srv/http/xms/index.php(16): Xms\\Core\\Xms->run()\n#7 {main}\n  thrown in /srv/http/xms/includes/Xms/Core/CommonXml.php on line 86
 5.0.4
 - Improved use directive: imports @xpath from @source and add to @where as defined by @mode
     @mode attribute one of append,prepend,before,after,replace; default append

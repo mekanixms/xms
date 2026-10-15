@@ -35,7 +35,7 @@ class Xml extends CommonXml implements XmlInterface
 
     public $encoding;
 
-    public function __construct(&$context = null, $encoding = 'UTF-8')
+    public function __construct($context = null, $encoding = 'UTF-8')
     {
 
         $this->encoding = $encoding;
@@ -45,7 +45,7 @@ class Xml extends CommonXml implements XmlInterface
         $this->doc = new DOMDocument("1.0", $this->encoding);
         $this->doc->encoding = $this->encoding;
 
-        if (func_num_args() == 1) {
+        if ($context !== null) {
             if (gettype($context) == "string") {
                 if (!$this->doc->loadXML($context))
                     throw new ErrorException("\nError loading document in " . get_class($this) . "\n");
@@ -65,9 +65,10 @@ class Xml extends CommonXml implements XmlInterface
                     $this->context = &$this->doc;
                 }
             }
-        } else {
-            $this->context = &$this->doc;
         }
+
+        if (!isset($this->context))
+            $this->context = &$this->doc;
 
         $this->xpath = new DOMXPath($this->doc);
     }
