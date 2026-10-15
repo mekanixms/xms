@@ -1,6 +1,6 @@
 # XMS architecture
 
-Reference for how this codebase is meant to work. Intent comes from `README.md` (Cezar Lucan, aws-dms.com, GPL, started 2010). The pipeline below is what `includes/Xms/Core/Xms.php` actually does.
+Reference for how this codebase is meant to work. Intent comes from `README.md`. The pipeline below is what `includes/Xms/Core/Xms.php` actually does.
 
 XMS is a PHP content-management framework. An application is an XML document. PHP and JavaScript live inside that document as processing instructions and run against the DOM. The engine is event-based and adds observable instance properties and methods on top of PHP's DOM, which does not allow them natively.
 
@@ -69,9 +69,11 @@ Two PHP dialects:
    - `Utils::clientrun()` walks `CLIENT` depth-first and executes element and PI directives. A directive that returns a fragment is inserted and walked; the directive node is then removed.
    - event `documentdone`
    - **step 2** on `APP`: non-invokable `domiterator`, then `xpath` filters.
+   - `drainClientDirectives()` repeats `clientrun` while the client still contains directives (`<?php?>`, `<?js?>`, `import`, `case`), up to `Xms::DIRECTIVE_DRAIN_LIMIT` passes. This executes directives a filter inserted after the first walk, including a directive that lands in a part of the tree that walk already passed.
    - **step 3** on `LANG`: `sys`, `ui`, `err` messages when `$_SESSION["lang"]` is set.
    - event `done`
 3. `runParsers()` runs every parser whose `check` passes, against `CLIENT`.
+4. `drainClientDirectives()` runs again, so a directive inserted by a parser is executed the same way.
 
 Other engine events: `loaded` (after resources exist; creates `cache/` and `log/`). Each step also fires an event named after its alias.
 
@@ -83,7 +85,7 @@ These three are easy to mix up. They run at different times and live in differen
 
 | Kind | Where it is defined | When it runs | What it is for |
 | --- | --- | --- | --- |
-| Client directive | Inside `/app/client` (and imported fragments) | During `clientrun`, after `init` / `createClient` | `case`, `import`, `<?php?>`, `<?js?>` |
+| Client directive | Inside `/app/client` (and imported fragments) | During `clientrun`, and again after filters and after parsers while any remain | `case`, `import`, `<?php?>`, `<?js?>` |
 | Application directive | Children of `/app` | Step 1, before the client walk | `remotetemplate`, `use`, `name`, `init` |
 | Filter | `/app/filters` | Step 2, after the client walk, unless `class` contains `invokable` | `xpath`, `domiterator`, `import` |
 | Parser | `parsers.xml`, or `/app/parsers` | After all directives, on `CLIENT`, every request | Global transforms (the shipped ones are SEO) |

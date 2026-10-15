@@ -5,9 +5,9 @@ use DOMNode;
 /*
  * XMS - Online Web Development
  *
- * Copyright (c) 2010 Cezar Lucan cezar.lucan@aws-dms.com
+ * Copyright (c) 2010 Cezar Lucan cezar.lucan@gmail.com
  * Licensed under GPL license.
- * http://www.aws-dms.com
+ * https://github.com/mekanixms/xms
  *
  * Date: 2010-10-24
  */
@@ -64,6 +64,9 @@ class Directive
 
     static function isDirective(&$el)
     {
+        if ($el->nodeType !== XML_ELEMENT_NODE && $el->nodeType !== XML_PI_NODE)
+            return FALSE;
+
         if (is_callable(self::getDirectiveHandler($el)))
             return TRUE;
         else

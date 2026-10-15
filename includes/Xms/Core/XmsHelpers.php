@@ -8,9 +8,9 @@ use DOMDocumentFragment;
 /*
  * XMS - Online Web Development
  *
- * Copyright (c) 2010 Cezar Lucan cezar.lucan@aws-dms.com
+ * Copyright (c) 2010 Cezar Lucan cezar.lucan@gmail.com
  * Licensed under GPL license.
- * http://www.aws-dms.com
+ * https://github.com/mekanixms/xms
  *
  * Date: 2010-10-24
  */
@@ -502,6 +502,7 @@ trait XmsHelpers
                         break;
                 }
 
+        $tmpFilter["origin"] = ($el->ownerDocument === $this("APP")->doc) ? "local" : "global";
         $this->PARSERS[] = $tmpFilter;
     }
 }

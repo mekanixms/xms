@@ -2,6 +2,6 @@
 2. change Designer's username and password in defaults.php (look for AWS_DESIGNER_ADMIN and AWS_DESIGNER_PASSWORD)
 3. open designer http://xms/location/?use=templates/designer.xml
 4. open XMS http://xms/location
-5. visit http://aws-dms.com/ to learn how XMS works and http://doc.aws-dms.com for documentation of builtin classes
+5. visit ........ to learn how XMS works and ..... for documentation of builtin classes
 
 Have fun!

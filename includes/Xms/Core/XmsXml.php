@@ -9,9 +9,9 @@ use DOMXpath;
 /*
  * XMS - Online Web Development
  *
- * Copyright (c) 2010 Cezar Lucan cezar.lucan@aws-dms.com
+ * Copyright (c) 2010 Cezar Lucan cezar.lucan@gmail.com
  * Licensed under GPL license.
- * http://www.aws-dms.com
+ * https://github.com/mekanixms/xms
  *
  * Date: 2010-10-24
  */

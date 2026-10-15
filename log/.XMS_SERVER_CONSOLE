@@ -1,2 +1,93 @@
-			test/docs.ex.xpath.1.xml ET:0.00065994262695312
+
+
+
+
+Event Type 	loaded
+C Target	Xms\Core\Xms
+I Target	Xms\Core\Xms
+Propagate	0
+DATA
+Array
+(
+)
+
+
+
+
+
+RUN_STEP:
+	remotetemplate:	//*[local-name()='app']/*[local-name()='remotetemplate']
+
+
+RUN_STEP:
+	use:	//*[local-name()='app']/*[local-name()='use']
+
+
+RUN_STEP:
+	name:	//*[local-name()='app']/*[local-name()='name']
+
+
+RUN_STEP:
+	init:	//*[local-name()='app']/*[local-name()='init']
+
+
+RUN_STEP:
+	createClient:	/*[local-name()='app']/*[local-name()='client'][1]
+
+
+RUN_STEP:
+	import:	//*[local-name()='app']/*[local-name()='filters']/*[local-name()='dom']/*[local-name()='filter' and not(contains(@class,'invokable'))]/*[local-name()='import']
+
+
+RUN_STEP:
+	domiterator:	//*[local-name()='app']/*[local-name()='filters']/*[local-name()='dom']/*[local-name()='filter' and not(contains(@class,'invokable'))]/*[local-name()='domiterator']
+
+
+RUN_STEP:
+	xpath:	//*[local-name()='app']/*[local-name()='filters']/*[local-name()='dom']/*[local-name()='filter' and not(contains(@class,'invokable'))]/*[local-name()='xpath']
+
+
+RUN_STEP:
+	langsys:	//lang///sys/*
+
+
+RUN_STEP:
+	langui:	//lang///ui/*
+
+
+RUN_STEP:
+	langerr:	//lang///err/*
+
+
+RUNNING PARSERS:
+Array
+(
+    [0] => Array
+        (
+            [xpath] => //*[@id="here"]
+            [check] => Closure Object
+                (
+                )
+
+            [checkData] => return TRUE;
+            [callback] => Closure Object
+                (
+                    [parameter] => Array
+                        (
+                            [&$el] => <required>
+                        )
+
+                )
+
+            [callbackData] => $case = "<case><filter><" . "?php return \"show\";?" . "></filter><show>FROMPARSER</show></case>";
+$imp = "<import xpath=\"/app/templates/bit/text()\"/>";
+$f = $el->ownerDocument->createDocumentFragment();
+$f->appendXML($case . $imp);
+$el->appendChild($f);
+
+            [origin] => local
+        )
+
+)
+
 

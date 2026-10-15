@@ -9,9 +9,9 @@ use DOMDocumentFragment;
 /*
  * XMS - Online Web Development
  *
- * Copyright (c) 2010 Cezar Lucan cezar.lucan@aws-dms.com
+ * Copyright (c) 2010 Cezar Lucan cezar.lucan@gmail.com
  * Licensed under GPL license.
- * http://www.aws-dms.com
+ * https://github.com/mekanixms/xms
  *
  * Date: 2010-10-24
  */
@@ -39,6 +39,7 @@ class Xms implements XmsEventHandler
 
     const VERSION = 4.20;
     const releaseDate = "2015-05-03";
+    const DIRECTIVE_DRAIN_LIMIT = 32;
 
     use Overload;
 
@@ -231,6 +232,7 @@ class Xms implements XmsEventHandler
 
         $this->runBuiltInDirectives();
         $this->runParsers();
+        $this->drainClientDirectives();
 
         $this->executionTime += microtime(true);
         return $this;
@@ -341,9 +343,46 @@ class Xms implements XmsEventHandler
         $this->trigger("documentdone", [], XmsEvent::BUBBLE_CANCEL);
 
         $this->runStep($this->step2);
+        $this->drainClientDirectives();
         $this->runStep($this->step3);
 
         $this->trigger("done", [], XmsEvent::BUBBLE_CANCEL);
+    }
+
+    /**
+     * Executes client directives inserted after the main walk.
+     * Filters and parsers run too late for the first clientrun, so a php instruction,
+     * import, or case they insert would otherwise remain in the output.
+     * Each pass walks the whole client. A directive that inserts another directive
+     * outside the nodes still to be visited is picked up by the next pass.
+     */
+    private function drainClientDirectives()
+    {
+        $root = $this->CLIENT->doc->documentElement;
+        if (!$root instanceof \DOMNode)
+            return;
+
+        for ($pass = 0; $pass < self::DIRECTIVE_DRAIN_LIMIT; $pass++) {
+            if (!$this->clientContainsDirective($root))
+                return;
+            Utils::clientrun($root);
+        }
+
+        if ($this->clientContainsDirective($root))
+            $this->XMS_SERVER_CONSOLE = "drainClientDirectives stopped after " . self::DIRECTIVE_DRAIN_LIMIT . " passes; client still contains directives\n";
+    }
+
+    private function clientContainsDirective(\DOMNode $node)
+    {
+        if ($node->nodeType === XML_ELEMENT_NODE || $node->nodeType === XML_PI_NODE)
+            if (Directive::isDirective($node))
+                return TRUE;
+
+        foreach ($node->childNodes as $child)
+            if ($child instanceof \DOMNode && $this->clientContainsDirective($child))
+                return TRUE;
+
+        return FALSE;
     }
 
     private function runStep($step)
@@ -393,15 +432,17 @@ class Xms implements XmsEventHandler
         foreach ($this->PARSERS as $parser) {
             $check = TRUE;
 
-            if (is_callable($parser["check"]))
+            if (isset($parser["check"]) && is_callable($parser["check"]))
                 $check = call_user_func($parser["check"]);
 
-            if ($check)
+            if ($check && isset($parser["xpath"], $parser["callback"]) && is_callable($parser["callback"]))
                 $this->CLIENT->q($parser["xpath"])->each($parser["callback"]);
-            $this->trigger("parser", array(
-                $parser["xpath"],
-                ($parser->ownerDocument === $this("APP")->doc ? "local" : "global")
-            ), XmsEvent::BUBBLE_CANCEL);
+
+            if (isset($parser["xpath"]))
+                $this->trigger("parser", array(
+                    $parser["xpath"],
+                    isset($parser["origin"]) ? $parser["origin"] : "global"
+                ), XmsEvent::BUBBLE_CANCEL);
         }
     }
 
