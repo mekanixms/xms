@@ -5,3 +5,6 @@ cache/*
 composer.lock
 vendor/*
 log/*
+!log/.htaccess
+.vscode/
+*.log
