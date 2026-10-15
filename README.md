@@ -150,7 +150,7 @@ Multilanguage support is a work in progress however Xms uses lang.xml to match p
 Xms uses it's own xml editor called **Designer**, enforcing the developers to code online, without needing any other tool.
 
 Additional resources can be found on my website http://aws-dms.com
-Classes documentation can be found at http://doc.aws-dms.com
+Classes documentation is in the [doc/](doc/) folder. Regenerate it with [Doctum](https://github.com/code-lts/doctum): `php doctum.phar update doctum.php`
 
 Since the documentation is a work in progress don't hesitate to ask any questions directly via email or on the website. 
 

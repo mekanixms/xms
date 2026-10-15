@@ -1,3 +1,6 @@
+5.2
+    - loop throught the app
+    - doc generated with doctum
 5.1
     fixes for php 8
         issues with $this->topmost()->XMS_SERVER_CONSOLE

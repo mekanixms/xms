@@ -1,5 +1,6 @@
 nbproject
 mockup
+DEV_INSTRUCTIONS.md
 cache/*
 composer.lock
 vendor/*
