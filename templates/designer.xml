@@ -4,7 +4,7 @@
         <element content="text/html; charset=iso-8859-1" http-equiv="Content-Type">text/html; charset=iso-8859-1</element>
       </metas><title/>
       <load src="js/smartObject.js" type="text/javascript"/><load src="js/array.js" type="text/javascript"/><load src="js/jqDomStorage.js" type="text/javascript"/><load src="js/jquery/jquery-1.10.2.js" type="text/javascript"/>
-      <style href="css/redmond/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+      <style href="css/dark-hive/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
       <load src="js/jquery/jquery-ui-1.10.4.min.js" type="text/javascript"/><load src="js/jquery/jquery.scrollTo-1.4.12.js" type="text/javascript"/>
       <load src="js/jquery/hotkeys/jquery.hotkeys-0.7.9.min.js" type="text/javascript"/>
       
@@ -119,7 +119,7 @@ $el->topmost()->CLIENT->q("//header")->append('<load type="text/javascript" src=
   
   <parsers>
     <item>
-      <xpath>//style[@rel="stylesheet"][@href="css/redmond/jquery-ui.min.css"][1]</xpath>
+      <xpath>//style[@rel="stylesheet"][@href="css/dark-hive/jquery-ui.min.css"][1]</xpath>
       <callback><?aws $el->setAttribute("href","css/".AWS_DESIGNER_THEME."/jquery-ui.min.css");?></callback>
       
     </item>

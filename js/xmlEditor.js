@@ -199,6 +199,14 @@ $.fn.xmlEditor = function (options) {
                 value: true,
                 type: "checkbox",
                 alt: ""
+            },
+            nodeToolsScale: {
+                name: "nodeToolsScale",
+                message: "Left node tools scale",
+                value: "1",
+                type: "select",
+                options: ["1", "2"],
+                alt: "1 is the normal size, 2 doubles it"
             }
         },
         treeDisplayFilter: function (node) {
@@ -763,9 +771,13 @@ $.fn.xmlEditor = function (options) {
             "name": "runtimeOptions"
         });
         //daca avem recordset length >0
-        if (typeOf(databaseRuntimeOptionsRecord) == "Array" && databaseRuntimeOptionsRecord.length > 0)
+        if (typeOf(databaseRuntimeOptionsRecord) == "Array" && databaseRuntimeOptionsRecord.length > 0) {
             obj.runtimeOptions = databaseRuntimeOptionsRecord[0].content;
-        else
+            for (var runtimeOptionName in o.runtimeOptions) {
+                if (!obj.runtimeOptions[runtimeOptionName])
+                    obj.runtimeOptions[runtimeOptionName] = $.extend(true, {}, o.runtimeOptions[runtimeOptionName]);
+            }
+        } else
             obj.runtimeOptions = o.runtimeOptions;
 
         obj.runtimeOptionsBackup = JSON.parse(JSON.stringify(o.runtimeOptions));
@@ -1000,6 +1012,14 @@ $.fn.xmlEditor = function (options) {
                         case "checkbox":
                             optTemplate = '<input type="checkbox" title="' + (new String(obj.runtimeOptions[which].alt)) + '" name="' + which + '" ' + (obj.runtimeOptions[which].value == true ? 'checked="checked"' : '') + '>';
                             break;
+                        case "select":
+                            optTemplate = '<select title="' + (new String(obj.runtimeOptions[which].alt)) + '" name="' + which + '">';
+                            for (var optionIndex = 0; optionIndex < obj.runtimeOptions[which].options.length; optionIndex++) {
+                                var optionValue = obj.runtimeOptions[which].options[optionIndex];
+                                optTemplate += '<option value="' + optionValue + '"' + (String(obj.runtimeOptions[which].value) == String(optionValue) ? ' selected="selected"' : '') + '>' + optionValue + '</option>';
+                            }
+                            optTemplate += '</select>';
+                            break;
                         default:
                             optTemplate = '<input type="text" title="' + (new String(obj.runtimeOptions[which].alt)) + '" style="width:90%;" name="' + which + '" value="' + obj.runtimeOptions[which].value + '">';
                             break
@@ -1014,7 +1034,7 @@ $.fn.xmlEditor = function (options) {
             },
             buttons: {
                 Ok: function () {
-                    $("input", this).each(function () {
+                    $("input, select", this).each(function () {
                         switch (this.getAttribute("type")) {
                             case "checkbox":
                                 obj.runtimeOptions[this.getAttribute("name")].value = ($(this).is(':checked') ? true : false);
@@ -1055,13 +1075,14 @@ $.fn.xmlEditor = function (options) {
                     } else {
                         obj.displayNodesFilter = {}
                     }
+                    obj.applyNodeToolsScale();
                     $(this).dialog("close")
                 },
                 Cancel: function () {
                     $(this).dialog("close")
                 },
                 Defaults: function () {
-                    $("input", this).each(function () {
+                    $("input, select", this).each(function () {
                         switch (this.getAttribute("type")) {
                             case "checkbox":
                                 obj.runtimeOptionsBackup[this.getAttribute("name")]["value"] == "checked" ? $(this).prop("checked", "checked") : $(this).prop("checked", false);
@@ -1073,7 +1094,7 @@ $.fn.xmlEditor = function (options) {
                     })
                 },
                 "Undo changes": function () {
-                    $("input", this).each(function () {
+                    $("input, select", this).each(function () {
                         switch (this.getAttribute("type")) {
                             case "checkbox":
                                 obj.runtimeOptions[this.getAttribute("name")]["value"] == "checked" ? $(this).prop("checked", "checked") : $(this).prop("checked", false);
@@ -3308,11 +3329,25 @@ $.fn.xmlEditor = function (options) {
 
         var position = $("#nodeListDiv", obj).position();
 
+        obj.nodeToolsScale = function () {
+            var option = obj.runtimeOptions.nodeToolsScale;
+            return option && String(option.value) === "2" ? 2 : 1;
+        };
+        obj.applyNodeToolsScale = function () {
+            var scale = obj.nodeToolsScale();
+            $("#controls").width(16 * scale);
+            $("#controls > span.node-tool").css({
+                transform: scale === 2 ? "scale(2)" : "",
+                "transform-origin": "left top",
+                "margin-bottom": scale === 2 ? "16px" : ""
+            });
+        };
+
         if (obj.runtimeOptions.nodeToolsAlwaysShow.value) {
             nodeToolsContainerTemplate.css({
                 top: position.top + 20,
                 left: position.left,
-                width: 10,
+                width: 16 * obj.nodeToolsScale(),
                 "z-index": 1001
             }).show()
         } else {
@@ -3321,7 +3356,7 @@ $.fn.xmlEditor = function (options) {
                 nodeToolsContainerTemplate.css({
                     top: position.top + 20,
                     left: position.left,
-                    width: 10,
+                    width: 16 * obj.nodeToolsScale(),
                     "z-index": 1001
                 }).show()
             });
@@ -3329,6 +3364,7 @@ $.fn.xmlEditor = function (options) {
                 nodeToolsContainerTemplate.hide()
             })
         }
+        obj.applyNodeToolsScale();
 
     };
 
